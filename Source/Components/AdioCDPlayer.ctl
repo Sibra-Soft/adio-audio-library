@@ -171,7 +171,7 @@ Dim drives As New Collection
 
 Set drives = GetListOfDrives
 
-If Ext.Exists(drives, id + 1) Then
+If Helpers.Exists(drives, id + 1) Then
     CurDrive = id + 1
     
     Ready = True
@@ -227,6 +227,6 @@ End Sub
 '* Resize the usercontrol
 '*
 Private Sub UserControl_Resize()
-Width = Image_Main.Width
-Height = Image_Main.Height
+width = Image_Main.width
+height = Image_Main.height
 End Sub

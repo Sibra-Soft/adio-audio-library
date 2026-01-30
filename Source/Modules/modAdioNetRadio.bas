@@ -92,7 +92,7 @@ Dim R As Long
 Call BASS_SetConfig(BASS_CONFIG_NET_PLAYLIST, 1)
 
 ' Check if the proxy must be set
-If StrExt.IsNullOrWhiteSpace(ProxyServer) Then
+If StringHelpers.IsNullOrWhiteSpace(ProxyServer) Then
     Call BASS_SetConfigPtr(BASS_CONFIG_NET_PROXY, vbNullString)
 Else
     Call BASS_SetConfigPtr(BASS_CONFIG_NET_PROXY, StrPtr(ProxyServer))
@@ -169,17 +169,17 @@ Else
     End If
 End If
 End Sub
-Public Sub METASYNC(ByVal handle As Long, ByVal Channel As Long, ByVal Data As Long, ByVal user As Long)
+Public Sub METASYNC(ByVal handle As Long, ByVal Channel As Long, ByVal data As Long, ByVal user As Long)
 Call DoMeta
 End Sub
 
-Public Sub STALLSYNC(ByVal handle As Long, ByVal Channel As Long, ByVal Data As Long, ByVal user As Long)
-If Data = 0 Then ' stalled
+Public Sub STALLSYNC(ByVal handle As Long, ByVal Channel As Long, ByVal data As Long, ByVal user As Long)
+If data = 0 Then ' stalled
     'frmNetradio.tmrStall.Enabled = True ' start buffer monitoring
 End If
 End Sub
 
-Public Sub FREESYNC(ByVal handle As Long, ByVal Channel As Long, ByVal Data As Long, ByVal user As Long)
+Public Sub FREESYNC(ByVal handle As Long, ByVal Channel As Long, ByVal data As Long, ByVal user As Long)
 chan = 0
 
 StreamState = Stopped

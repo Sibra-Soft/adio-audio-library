@@ -187,13 +187,13 @@ Public Function GetProperties() As mdlAdioProperties
 Dim ReturnModel As New mdlAdioProperties
 
 ReturnModel.DurationInSeconds = Runtime
-ReturnModel.DurationString = Ext.SecondsToTimeSerial(ReturnModel.DurationInSeconds, SmallTimeSerial)
+ReturnModel.DurationString = Helpers.SecondsToTimeSerial(ReturnModel.DurationInSeconds, SmallTimeSerial)
 
 ReturnModel.ElapsedInSeconds = CurrentElapsedTime
-ReturnModel.ElapsedString = Ext.SecondsToTimeSerial(ReturnModel.ElapsedInSeconds, SmallTimeSerial)
+ReturnModel.ElapsedString = Helpers.SecondsToTimeSerial(ReturnModel.ElapsedInSeconds, SmallTimeSerial)
 
 ReturnModel.RemainingInSeconds = Runtime - CurrentElapsedTime
-ReturnModel.RemainingString = Ext.SecondsToTimeSerial(ReturnModel.RemainingInSeconds, SmallTimeSerial)
+ReturnModel.RemainingString = Helpers.SecondsToTimeSerial(ReturnModel.RemainingInSeconds, SmallTimeSerial)
 
 Set GetProperties = ReturnModel
 End Function
@@ -701,7 +701,7 @@ For mGroupNumber = 1 To UBound(MainStreamGroup, 1)
     End If
 Next mGroupNumber
 
-HScrollPlayerTime.Max = nHi / 1000
+HScrollPlayerTime.max = nHi / 1000
 Runtime = Round(nHi / 1000)
 
 ExitSection:
@@ -1151,8 +1151,8 @@ MidiOutput.ErrorHalt = True
 End Sub
 
 Private Sub UserControl_Resize()
-Width = Image_Main.Width
-Height = Image_Main.Height
+width = Image_Main.width
+height = Image_Main.height
 End Sub
 
 Private Sub UserControl_Terminate()

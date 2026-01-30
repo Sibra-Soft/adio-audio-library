@@ -4,7 +4,7 @@ Attribute VB_Name = "modAdio"
 '// FileType        : Microsoft Visual Basic 6 - Module
 '// Author          : Alex van den Berg
 '// Created         : 17-08-2023
-'// Last Modified   : 01-11-2023
+'// Last Modified   : 30-01-2026
 '// Copyright       : Sibra-Soft
 '// Description     : Simplified functions for using Bass
 '////////////////////////////////////////////////////////////////
@@ -80,7 +80,7 @@ If Fso.GetExtensionName(File) <> "mp3" Then
     ' When it's not a MP3 file
     Select Case PropertyType
         Case enumAdioProperty.pDurationInSeconds: AdioReadAudioProperty = modFileProp.GetFileDurationInSeconds(File)
-        Case enumAdioProperty.pDurationString: AdioReadAudioProperty = Ext.SecondsToTimeSerial(modFileProp.GetFileDurationInSeconds(File), SmallTimeSerial)
+        Case enumAdioProperty.pDurationString: AdioReadAudioProperty = Helpers.SecondsToTimeSerial(modFileProp.GetFileDurationInSeconds(File), SmallTimeSerial)
         Case enumAdioProperty.pFileSize: AdioReadAudioProperty = FileLen(File)
     End Select
 Else
@@ -91,7 +91,7 @@ Else
         Case enumAdioProperty.pDurationInSeconds: AdioReadAudioProperty = modFileProp.GetFileDurationInSeconds(File)
         Case enumAdioProperty.pBitrate: AdioReadAudioProperty = OutputInfo.Bitrate
         Case enumAdioProperty.pFileSize: AdioReadAudioProperty = FileLen(File)
-        Case enumAdioProperty.pDurationString: AdioReadAudioProperty = Ext.SecondsToTimeSerial(modFileProp.GetFileDurationInSeconds(File), SmallTimeSerial)
+        Case enumAdioProperty.pDurationString: AdioReadAudioProperty = Helpers.SecondsToTimeSerial(modFileProp.GetFileDurationInSeconds(File), SmallTimeSerial)
         Case enumAdioProperty.pChannels: AdioReadAudioProperty = OutputInfo.ChannelMode
         Case enumAdioProperty.pFrequency: AdioReadAudioProperty = OutputInfo.Frequency
     End Select
@@ -167,9 +167,9 @@ ReturnValue.ElapsedInSeconds = DPosNr(BASS_ChannelBytes2Seconds(Channel, SongPos
 ReturnValue.RemainingInSeconds = DPosNr(ReturnValue.DurationInSeconds - ReturnValue.ElapsedInSeconds)
 
 ' Get properties from seconds to string
-ReturnValue.DurationString = Ext.SecondsToTimeSerial(ReturnValue.DurationInSeconds, SmallTimeSerial)
-ReturnValue.ElapsedString = Ext.SecondsToTimeSerial(ReturnValue.ElapsedInSeconds, SmallTimeSerial)
-ReturnValue.RemainingString = Ext.SecondsToTimeSerial(ReturnValue.RemainingInSeconds, SmallTimeSerial)
+ReturnValue.DurationString = Helpers.SecondsToTimeSerial(ReturnValue.DurationInSeconds, SmallTimeSerial)
+ReturnValue.ElapsedString = Helpers.SecondsToTimeSerial(ReturnValue.ElapsedInSeconds, SmallTimeSerial)
+ReturnValue.RemainingString = Helpers.SecondsToTimeSerial(ReturnValue.RemainingInSeconds, SmallTimeSerial)
 
 Set GetProperties = ReturnValue
 End Function

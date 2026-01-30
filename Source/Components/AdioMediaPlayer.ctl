@@ -160,7 +160,7 @@ End Function
 Public Function LoadFile(File As String) As Boolean
 Dim Fso As New FileSystemObject
 
-If Not Ext.FileExists(File) Then: RaiseEvent Error("File not found", 100)
+If Not Helpers.FileExists(File) Then: RaiseEvent Error("File not found", 100)
 If Not CheckFileSupport(File) Then: RaiseEvent Error("File not supported", 110)
 
 Call BASS_ChannelFree(MediaChannel)
@@ -207,6 +207,6 @@ Label_StreamTitle.Caption = modAdioNetRadio.StreamMeta
 End Sub
 
 Private Sub UserControl_Resize()
-Width = Image_Main.Width
-Height = Image_Main.Height
+width = Image_Main.width
+height = Image_Main.height
 End Sub

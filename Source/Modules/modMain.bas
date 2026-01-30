@@ -4,8 +4,8 @@ Option Explicit
 Public SoundFont As Long
 
 Public TagLib As New clsAdioTagLibrary
-Public StrExt As New clsStringExtensions
-Public Ext As New clsSibraSoft
+Public StringHelpers As New clsStringExtensions
+Public Helpers As New clsSibraSoft
 Public Function CheckFileSupport(File As String) As Boolean
 Dim Fso As New FileSystemObject
 

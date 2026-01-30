@@ -39,7 +39,7 @@ Attribute VB_Exposed = True
 Option Explicit
 
 '// Private vars
-Private MasterVolume As New clsAdioCoreMasterVolume
+Private MasterVolume As New clsAdioMasterVolume
 Private CurChannel As Long
 
 '// Public vars
@@ -102,7 +102,7 @@ End Sub
 '* Timer for keeping track of the audio changes
 '*
 Private Sub Timer_Main_Timer()
-Dim Level As Long
+Dim level As Long
 Dim Left As Integer
 Dim Right As Integer
 
@@ -118,10 +118,10 @@ Dim Endpoint As New clsAdioCoreAudioEndpoint
 RaiseEvent MasterAudioPeakLevelChange(Math.Round(Endpoint.GetPeak * 100))
 
 ' Get right and left level
-Level = BASS_ChannelGetLevel(CurChannel)
+level = BASS_ChannelGetLevel(CurChannel)
 
-Left = (LoWord(Level) / 32768) * 100
-Right = (HiWord(Level) / 32768) * 100
+Left = (LoWord(level) / 32768) * 100
+Right = (HiWord(level) / 32768) * 100
 
 If Left > 100 Then: Exit Sub
 If Right > 100 Then: Exit Sub

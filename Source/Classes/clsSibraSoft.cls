@@ -70,7 +70,7 @@ Private Declare Function getprivateprofilestring Lib "kernel32" Alias "GetPrivat
 Private Declare Function writeprivateprofilestring Lib "kernel32" Alias "WritePrivateProfileStringA" (ByVal lpApplicationName As String, ByVal lpKeyname As Any, ByVal lpString As Any, ByVal lpFileName As String) As Long
 Public Function Exists(ByVal oCol As Collection, ByVal vKey As Variant) As Boolean
 On Error Resume Next
-oCol.Item vKey
+oCol.item vKey
 Exists = (Err.number = 0)
 Err.Clear
 End Function
@@ -116,7 +116,7 @@ FileExists = myFSO.FileExists(sFullPath)
 End Function
 Public Function CommondialogFilesToList(Files As String) As String
 Dim FileList
-Dim I As Integer
+Dim i As Integer
 Dim Output As String
 
 Debug.Print Files
@@ -125,9 +125,9 @@ FileList = Split(Files, Chr(0))
 If UBound(FileList) = 0 Then
     Output = Files
 Else
-    For I = 0 To UBound(FileList)
-        If Me.FileExists(FileList(0) & "\" & FileList(I)) Then
-            Output = Output & FileList(0) & "\" & FileList(I) & vbNewLine
+    For i = 0 To UBound(FileList)
+        If Me.FileExists(FileList(0) & "\" & FileList(i)) Then
+            Output = Output & FileList(0) & "\" & FileList(i) & vbNewLine
         End If
     Next
 End If
@@ -243,11 +243,11 @@ End Function
 
 
 Public Function CollectionToString(TargetCollection As Collection, Seperator As String) As String
-Dim I As Integer
+Dim i As Integer
 Dim ReturnValue As String
 
-For I = 1 To TargetCollection.Count
-    ReturnValue = ReturnValue & TargetCollection(I) & Seperator
+For i = 1 To TargetCollection.Count
+    ReturnValue = ReturnValue & TargetCollection(i) & Seperator
 Next
 
 CollectionToString = Left$(ReturnValue, Len(ReturnValue) - 1)
@@ -260,7 +260,7 @@ sRet = String(255, Chr(0))
 
 ReturnValue = Left(sRet, getprivateprofilestring(section, ByVal KeyName$, "", sRet, Len(sRet), FileName))
 
-If StrExt.IsNullOrWhiteSpace(ReturnValue) Then
+If StringHelpers.IsNullOrWhiteSpace(ReturnValue) Then
     INIRead = DefaultValue
 Else
     INIRead = ReturnValue
@@ -386,13 +386,13 @@ Loop
 RmDir path
 End Function
 Public Function GetFileNameFromFilePath(FilePath As String, WithExtension As Boolean) As String
-Dim posn As Integer, I As Integer
+Dim posn As Integer, i As Integer
 Dim FName As String
     
 posn = 0
-For I = 1 To Len(FilePath)
-    If (Strings.Mid(FilePath, I, 1) = "\") Then posn = I
-Next I
+For i = 1 To Len(FilePath)
+    If (Strings.mId(FilePath, i, 1) = "\") Then posn = i
+Next i
 
 FName = Strings.Right(FilePath, Len(FilePath) - posn)
 posn = InStr(FName, ".")

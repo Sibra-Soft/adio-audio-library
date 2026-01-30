@@ -158,8 +158,8 @@ Public Function AddFile(File As String, Optional InsertAt As Long = 0) As mdlAdi
 Dim PlaylistItem As New mdlAdioPlaylistItem
 Dim Fso As New FileSystemObject
 
-If StrExt.IsNullOrWhiteSpace(File) Then: Exit Function
-If Not Ext.FileExists(File) Then: RaiseEvent Error("File not found: " & File, 100): Exit Function
+If StringHelpers.IsNullOrWhiteSpace(File) Then: Exit Function
+If Not Helpers.FileExists(File) Then: RaiseEvent Error("File not found: " & File, 100): Exit Function
 If Not CheckFileSupport(File) Then: RaiseEvent Error("File not supported: " & File, 110): Exit Function
 If Not AllowDuplicateItems Then
     Dim Exists As Variant
@@ -216,14 +216,14 @@ Dim Value As String
 
 Set TempList = New Collection
 
-Column = StrExt.SplitStr(Query, Space(1), 0)
-Operator = StrExt.SplitStr(Query, Space(1), 1)
+Column = StringHelpers.SplitStr(Query, Space(1), 0)
+Operator = StringHelpers.SplitStr(Query, Space(1), 1)
  
 ' Check if query contains string
-If StrExt.Contains(Query, Chr(39)) Then
-    Value = StrExt.Between("'", "'", StrExt.SplitStr(Query, Space(1), 2))
+If StringHelpers.Contains(Query, Chr(39)) Then
+    Value = StringHelpers.Between("'", "'", StringHelpers.SplitStr(Query, Space(1), 2))
 Else
-    Value = StrExt.SplitStr(Query, Space(1), 2)
+    Value = StringHelpers.SplitStr(Query, Space(1), 2)
 End If
 
 ' Check for errors
@@ -236,7 +236,7 @@ End If
 For Each PlaylistItem In CurList
     ' Exec for extension
     If (Column = "extension" And Operator = "eq") And PlaylistItem.FileExtension = Value Then TempList.Add PlaylistItem
-    If (Column = "extension" And Operator = "like") And StrExt.Contains(PlaylistItem.FileExtension, Value) Then TempList.Add PlaylistItem
+    If (Column = "extension" And Operator = "like") And StringHelpers.Contains(PlaylistItem.FileExtension, Value) Then TempList.Add PlaylistItem
 Next
 
 QueryActive = True
@@ -262,7 +262,7 @@ If RepeatMode = PLS_NO_REPEAT Then
     End Select
 Else
     If RepeatMode = PLS_REPEAT And Direction = PLS_GOTO Then: CurTrack = TrackNr
-    If RepeatMode = PLS_SHUFFLE And Direction = PLS_GOTO Then: CurTrack = Ext.RandomNumber(1, ListCount)
+    If RepeatMode = PLS_SHUFFLE And Direction = PLS_GOTO Then: CurTrack = Helpers.RandomNumber(1, ListCount)
 End If
 
 ' Skip if end or begin of playlist
@@ -270,7 +270,7 @@ If CurTrack = 0 Then: Exit Function
 If CurTrack > CurList.Count Then: Exit Function
 
 ' Check if the tracknumber exists
-If Not Ext.Exists(CurList, CurTrack) Then: RaiseEvent Error("Specified tracknumber does not exists within the current playlist", 104): Exit Function
+If Not Helpers.Exists(CurList, CurTrack) Then: RaiseEvent Error("Specified tracknumber does not exists within the current playlist", 104): Exit Function
 
 RaiseEvent TrackChanged(CurList(CurTrack))
 
@@ -295,7 +295,7 @@ End Function
 '* @return String: The total runtime in string format
 '*
 Public Function GetPlaylistRuntimeString() As String
-GetPlaylistRuntimeString = Ext.SecondsToTimeSerial(GetPlaylistRuntimeInSeconds(), LongTimeSerial)
+GetPlaylistRuntimeString = Helpers.SecondsToTimeSerial(GetPlaylistRuntimeInSeconds(), LongTimeSerial)
 End Function
 '*
 '* Load a playlist file
@@ -333,8 +333,8 @@ End Function
 '* Usercontrol resize function
 '*
 Private Sub UserControl_Resize()
-Width = Image_Main.Width
-Height = Image_Main.Height
+width = Image_Main.width
+height = Image_Main.height
 End Sub
 Public Property Get AllowDuplicateItems() As Boolean
     AllowDuplicateItems = m_AllowDuplicateItems

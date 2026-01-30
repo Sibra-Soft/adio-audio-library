@@ -32,10 +32,18 @@ Object={4424C993-EABF-4A03-9BA9-369E0F07466E}#1.2#0; midifl2k.ocx
 UserControl=Components\AdioPlaylist.ctl
 UserControl=Components\AdioRecorder.ctl
 UserControl=Components\AdioTagging.ctl
+Module=modBass; Modules\modBass.bas
+Module=modBassFlac; Modules\modBassFlac.bas
+Module=modMain; Modules\modMain.bas
+Module=modMidiUtils; Modules\modMidiUtils.bas
+Module=modAdioMidi; Modules\modAdioMidi.bas
+Module=modSortArray; Modules\modSortArray.bas
+Module=modPlaylist; Modules\modPlaylist.bas
 Startup="(None)"
 HelpFile=""
 Title="AdioLibrary"
 ExeName32="AdioLibrary.ocx"
+Path32="..\Build"
 Command32=""
 Name="AdioLibrary"
 HelpContextID="0"
@@ -63,6 +71,8 @@ Unattended=0
 Retained=0
 ThreadPerObject=0
 MaxNumberOfThreads=1
+DebugStartupOption=1
+DebugStartupComponent=AdioAudioPeak
 
 [CodeSMART]
 Task_UID=25_10_23_19_48_54
