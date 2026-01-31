@@ -2,7 +2,7 @@
 
 setlocal EnableExtensions EnableDelayedExpansion
 
-"./tests/AdioLibraryTests.exe"
+CALL "./tests/AdioLibraryTests.exe"
 
 IF ERRORLEVEL 1 (
 	EXIT /B 1
