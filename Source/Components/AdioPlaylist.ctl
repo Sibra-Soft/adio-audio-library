@@ -25,7 +25,7 @@ Attribute VB_Exposed = True
 '// FileType        : Microsoft Visual Basic 6 - Usercontrol
 '// Author          : Alex van den Berg
 '// Created         : 16-08-2023
-'// Last Modified   : 30-01-2026
+'// Last Modified   : 31-01-2026
 '// Copyright       : Sibra-Soft
 '// Description     : Playlist component
 '////////////////////////////////////////////////////////////////
@@ -168,7 +168,7 @@ If Not AllowDuplicateItems Then
     
     If Not Exists Is Nothing Then
         Set AddFile = Exists
-        RaiseEvent Error("Duplicates not allowed, file already in playlist on position: " & Exists.Nr, 202)
+        RaiseEvent Error("Duplicates not allowed, file already in playlist on position: " & Exists.nR, 202)
         Exit Function
     End If
 End If
@@ -178,7 +178,7 @@ PlaylistItem.FileExtension = Fso.GetExtensionName(File)
 PlaylistItem.FileName = Fso.GetFileName(File)
 PlaylistItem.RuntimeInSeconds = modAdio.AdioReadAudioProperty(File, pDurationInSeconds)
 PlaylistItem.RuntimeString = modAdio.AdioReadAudioProperty(File, pDurationString)
-PlaylistItem.Nr = CurList.Count + 1
+PlaylistItem.nR = CurList.Count + 1
 
 CurList.Add PlaylistItem
 

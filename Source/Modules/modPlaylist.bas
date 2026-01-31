@@ -1,52 +1,55 @@
 Attribute VB_Name = "modPlaylist"
 Public Function SavePlsPlaylist(File As String, list As Collection) As Boolean
-Dim PlsItem As mdlAdioPlaylistItem
+Dim plsItem As mdlAdioPlaylistItem
 
-For Each PlsItem In list
-    Call Ext.INIWrite("playlist", "File" & i, PlsItem.LocalFile, File)
+For Each plsItem In list
+    Call Helpers.INIWrite("playlist", "File" & i, plsItem.LocalFile, File)
 Next
 
-Call Extensions.INIWrite("playlist", "NumberOfEntries", lstFormList.ListItems.count, File)
+Call Extensions.INIWrite("playlist", "NumberOfEntries", lstFormList.ListItems.Count, File)
 Call Extensions.INIWrite("playlist", "Version", 2, File)
 
 ' Check if the playlist has been saved
-If Ext.FileExists(File) Then
+If Helpers.FileExists(File) Then
     SavePlsPlaylist = True
 Else
     SavePlsPlaylist = False
 End If
 End Function
-Public Function SaveAplPlaylist(File As String, list As Collection) As Boolean
-Dim PlsItem As mdlAdioPlaylistItem
+Public Function SaveAplPlaylist(strFile As String, colList As Collection) As Boolean
+Dim plsItem As mdlAdioPlaylistItem
+Dim FN As Integer
 
-Open File For Output As #FN
-    For Each PlsItem In list
-        Print #FN, PlsItem.LocalFile
+FN = FreeFile
+
+Open strFile For Output As #FN
+    For Each plsItem In colList
+        Print #FN, plsItem.LocalFile
     Next
 Close #FN
 
 ' Check if the playlist has been saved
-If Ext.FileExists(File) Then
+If Helpers.FileExists(strFile) Then
     SaveAplPlaylist = True
 Else
     SaveAplPlaylist = False
 End If
 End Function
 Public Function SaveM3uPlaylist(File As String, list As Collection) As Boolean
-Dim PlsItem As mdlAdioPlaylistItem
+Dim plsItem As mdlAdioPlaylistItem
 
 Open File For Output As #FN
     Print #FN, "#EXTM3U"
     
-    For Each PlsItem In list
-      Print #FN, "#EXTINF:0, " & Ext.GetFileNameFromFilePath(PlsItem.LocalFile, False)
-      Print #FN, PlsItem.LocalFile
+    For Each plsItem In list
+      Print #FN, "#EXTINF:0, " & Helpers.GetFileNameFromFilePath(plsItem.LocalFile, False)
+      Print #FN, plsItem.LocalFile
       Print #FN, ""
     Next
 Close #FN
 
 ' Check if the playlist has been saved
-If Ext.FileExists(File) Then
+If Helpers.FileExists(File) Then
     SaveM3uPlaylist = True
 Else
     SaveM3uPlaylist = False
@@ -54,9 +57,9 @@ End If
 End Function
 Public Function SaveWplPlaylist(File As String, list As Collection) As Boolean
 Dim PlaylistName As String
-Dim PlsItem As mdlAdioPlaylistItem
+Dim plsItem As mdlAdioPlaylistItem
 
-PlaylistName = Ext.GetFileNameFromFilePath(File, False)
+PlaylistName = Helpers.GetFileNameFromFilePath(File, False)
 
 Open File For Output As #1
     Print #1, "<?wpl version="; 1#; "?>"
@@ -69,7 +72,7 @@ Open File For Output As #1
     
     ' Get all the items from the selected playlist
     For Each plstItem In list
-      Print #1, "<media src=""" & PlsItem.LocalFile & """/>"
+      Print #1, "<media src=""" & plsItem.LocalFile & """/>"
     Next
     
     Print #1, "       </seq>"
@@ -86,7 +89,7 @@ End If
 End Function
 Public Function LoadAplFile(File As String) As String
 Dim StringListOfFiles As String
-StringListOfFiles = Ext.FileGetContents(File)
+StringListOfFiles = Helpers.FileGetContents(File)
 
 LoadAplFile = StringListOfFiles
 End Function

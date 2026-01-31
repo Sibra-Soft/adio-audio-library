@@ -432,7 +432,7 @@ Next m
             
             tempmessage = MidiFile.Message
             tempdata1 = MidiFile.Data1
-            If tempmessage <> meta Then 'ignore
+            If tempmessage <> META Then 'ignore
             ElseIf tempdata1 = META_TEMPO Then ' tempo
                 mMsgFF81TempoCount = mMsgFF81TempoCount + 1
                 If mMsgFF81TempoCount > UBound(arMsgFF81Tempo, 2) Then _
@@ -644,7 +644,7 @@ MidiOutput.StreamNumber = MainStreamGroup(mGroupNumber, MB_STREAMNUMBER)
 ' First message to describe stream for reference (optional)
 MidiOutput.MessageState = MIDIMESSAGESTATE_ENABLED
 MidiOutput.MessageLogOnly = True
-MidiOutput.Message = meta
+MidiOutput.Message = META
 MidiOutput.Data1 = META_MARKER ' pass type of marker (0 to 255)
 MidiOutput.Data2 = 0 ' pass information (optional)
 MidiOutput.buffer = "built at, " & time
@@ -668,7 +668,7 @@ For mGroupNumber = 1 To UBound(MainStreamGroup, 1)
     MidiOutput.StreamNumber = MainStreamGroup(mGroupNumber, MB_STREAMNUMBER)
     MidiOutput.MessageState = MIDIMESSAGESTATE_ENABLED
     MidiOutput.MessageLogOnly = True
-    MidiOutput.Message = meta
+    MidiOutput.Message = META
     MidiOutput.Data1 = META_MARKER ' pass type of marker (0 to 255)
     MidiOutput.Data2 = 0 ' pass information (optional)
     MidiOutput.buffer = "Lowest time"

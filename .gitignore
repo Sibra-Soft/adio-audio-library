@@ -37,6 +37,9 @@
 *.sql text
 *.sh text
 *.bat text
+*.exp
+*.lib
+*.apl
 
 # templates
 *.ejs text

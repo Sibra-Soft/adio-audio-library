@@ -4,7 +4,7 @@ Attribute VB_Name = "modAdio"
 '// FileType        : Microsoft Visual Basic 6 - Module
 '// Author          : Alex van den Berg
 '// Created         : 17-08-2023
-'// Last Modified   : 30-01-2026
+'// Last Modified   : 31-01-2026
 '// Copyright       : Sibra-Soft
 '// Description     : Simplified functions for using Bass
 '////////////////////////////////////////////////////////////////
@@ -45,6 +45,16 @@ End Function
 '*
 Public Function AdioWriteTag(File As String, Value As String, TagType As enumAdioTags, TagVersion As enumAdioTagVersion) As Boolean
 Dim OutputTags As ID3Tag
+
+OutputTags.Artist = AdioReadTag(File, tArtist, TagVersion)
+OutputTags.Title = AdioReadTag(File, tTitle, TagVersion)
+OutputTags.Album = AdioReadTag(File, tAlbum, TagVersion)
+OutputTags.OrigArtist = AdioReadTag(File, tAlbumArtist, TagVersion)
+OutputTags.Composer = AdioReadTag(File, tComposer, TagVersion)
+OutputTags.Copyright = AdioReadTag(File, tCopyright, TagVersion)
+OutputTags.Genre = AdioReadTag(File, tGenre, TagVersion)
+OutputTags.SongYear = AdioReadTag(File, tYear, TagVersion)
+OutputTags.TrackNr = AdioReadTag(File, tTrackNumber, TagVersion)
 
 Select Case TagType
     Case enumAdioTags.tArtist: OutputTags.Artist = Value
