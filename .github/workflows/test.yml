@@ -89,10 +89,10 @@ jobs:
       - name: Prepare Test
         shell: cmd
         run: | 
-          CALL ./project/prepare_test.bat
+          CALL "./project/prepare_test.bat"
           
       - name: Run Unit Testing Tool
         shell: cmd
         run: |         
-          CALL ./Tests/AdioLibraryTests.exe
+          CALL "./Tests/AdioLibraryTests.exe"
       
