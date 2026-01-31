@@ -38,6 +38,10 @@ Write-Host ""
 $errors = 0
 
 Register("VbLiteUnit.dll")
+Register("midifl2k.ocx")
+Register("midifl32.ocx")
+Register("midiio2k.ocx")
+Register("midiio32.ocx")
 
 Write-Host ""
 Write-Host "======================================"
