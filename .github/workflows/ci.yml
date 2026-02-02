@@ -86,7 +86,13 @@ jobs:
         with:
           name: compiled-library
           path: './project/build'
-      
+          
+      - name: Register Project Dependencies
+        shell: powershell
+        run: |
+          cd ./project/deps
+          .\reg_deps.ps1 "../source/AdioAudioLibrary.vbp"
+          
       - name: Prepare Test
         shell: powershell
         run: |
