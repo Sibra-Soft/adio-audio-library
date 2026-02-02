@@ -2,8 +2,8 @@
 $ErrorActionPreference = "Stop"
 
 # Configuration
-$PROJECT_DIR = ".\Tests\"
-$COPY_LIST   = ".\Resources\build-files.txt"
+$PROJECT_DIR = "./Tests/"
+$COPY_LIST   = "../Resources/build-files.txt"
 
 function Register($file)
 {
@@ -27,8 +27,6 @@ function Register($file)
 }
 
 Set-Location $PROJECT_DIR
-
-# Pre-Build
 Write-Host "=== Prepare-Test ==="
 
 if (-not (Test-Path $COPY_LIST)) {
@@ -60,9 +58,8 @@ Get-Content $COPY_LIST | ForEach-Object {
         -ErrorAction Stop
 }
 
-Set-Location $PROJECT_DIR
-
-Register("../Build/midiio32.ocx")
+# Register the compiled library for testing
+Register("../Build/AdioLibrary.ocx")
 
 Write-Host "=== Prepare-Test Completed ==="
 exit 0

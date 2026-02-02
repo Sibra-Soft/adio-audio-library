@@ -3,7 +3,7 @@ $ErrorActionPreference = "Stop"
 
 # Configuration
 $PROJECT_DIR = "./Source/"
-$COPY_LIST   = "./Resources/build-files.txt"
+$COPY_LIST   = "../Resources/build-files.txt"
 
 Set-Location $PROJECT_DIR
 

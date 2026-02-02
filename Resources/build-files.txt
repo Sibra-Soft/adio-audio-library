@@ -1,4 +1,4 @@
-.\deps\bass.dll ; .
-.\deps\basscd.dll ; .
-.\deps\bassflac.dll ; .
-.\deps\bassmidi.dll ; .
+..\deps\bass.dll ; .
+..\deps\basscd.dll ; .
+..\deps\bassflac.dll ; .
+..\deps\bassmidi.dll ; .
