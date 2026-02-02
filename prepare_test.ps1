@@ -2,8 +2,8 @@
 $ErrorActionPreference = "Stop"
 
 # Configuration
-$PROJECT_DIR = "./Tests/"
-$COPY_LIST   = Join-Path $PROJECT_DIR "resources\build-files.txt"
+$PROJECT_DIR = ".\Tests\"
+$COPY_LIST   = ".\Resources\build-files.txt"
 
 function Register($file)
 {
