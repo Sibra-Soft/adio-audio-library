@@ -55,9 +55,10 @@ jobs:
           .\reg_deps.ps1 "../source/AdioAudioLibrary.vbp"
           
       - name: Prepare Compile
-        shell: cmd
-        run: | 
-          CALL ./project/prepare.bat
+        shell: powershell
+        run: |
+          cd ./project
+          .\prepare_build.ps1
           
       - name: Compile Visual Basic Library
         shell: cmd
@@ -87,9 +88,10 @@ jobs:
           path: './project/build'
       
       - name: Prepare Test
-        shell: cmd
-        run: | 
-          CALL "./project/prepare_test.bat"
+        shell: powershell
+        run: |
+          cd ./project
+          .\prepare_test.ps1
           
       - name: Run Unit Testing Tool
         shell: cmd
