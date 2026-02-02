@@ -1,4 +1,4 @@
-name: Compile & Test Visual Basic 6 Library
+name: CI
 
 on: 
   workflow_dispatch
