@@ -80,7 +80,29 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: './project'
-
+          
+      - name: Download VSC Image
+        run: |
+          Invoke-WebRequest "${{ secrets.VSC_IMAGE_URL }}" -OutFile vb_compiler_image.zip
+          
+      - name: Unzip VSC Image
+        run: |
+          Expand-Archive -Path "vsc22.zip" -DestinationPath "vsc22_image"
+          
+      - name: Install VSC
+        run: |
+          $process = Start-Process -FilePath ".\vsc22_image\vsc22.exe" -ArgumentList "/silent" -Wait -PassThru        
+          $exitCode = $process.ExitCode
+          if ($exitCode -eq 0 -or $exitCode -eq 3010)
+          {
+              Write-Host "Installation successful"
+          }
+          else
+          {
+              Write-Host "Non zero exit code returned by the installation process: $exitCode"
+              exit $exitCode
+          }
+          
       - name: Download deploy artifact
         uses: actions/download-artifact@v4
         with:
