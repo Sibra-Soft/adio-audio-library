@@ -83,7 +83,7 @@ jobs:
           
       - name: Download VSC Image
         run: |
-          Invoke-WebRequest "${{ secrets.VSC_IMAGE_URL }}" -OutFile vb_compiler_image.zip
+          Invoke-WebRequest "${{ secrets.VSC_IMAGE_URL }}" -OutFile "vsc22.zip"
           
       - name: Unzip VSC Image
         run: |
