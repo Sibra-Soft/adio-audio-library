@@ -150,8 +150,8 @@ jobs:
           nuget pack AdioLibrary.nuspec
 
       - name: Publish NuGet package
+        shell: cmd
         run: |
-          nuget push *.nupkg ^
-            -Source "github" ^
-            -ApiKey ${{ secrets.GITHUB_TOKEN }}
+          cd ./project
+          nuget push *.nupkg -Source "github" -ApiKey ${{ secrets.GITHUB_TOKEN }}
     
