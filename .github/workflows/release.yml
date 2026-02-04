@@ -147,7 +147,7 @@ jobs:
         shell: cmd
         run: |     
           cd ./project
-          dotnet nuget pack AdioLibrary.nuspec
+          nuget pack AdioLibrary.nuspec
 
       - name: Publish NuGet package
         shell: cmd
