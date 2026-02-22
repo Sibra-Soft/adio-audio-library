@@ -66,7 +66,7 @@ Public Event GetVolume(Value As Integer)
 Public Event VolumeChanged(Value As Integer)
 Public Event Error(Description As String, Code As Integer)
 Public Event DeviceFound(id As Integer, Name As String, InputDev As Boolean, OutputDev As Boolean)
-Public Event SoundFont(File As String)
+Public Event SoundFont(file As String)
 
 '// Private vars
 Private Declare Function GetVersion Lib "kernel32" () As Long
@@ -114,7 +114,7 @@ Do While BASS_GetDeviceInfo(a, di)
     device.dOutput = True
     device.dDriver = VBStrFromAnsiPtr(di.driver)
     device.dName = VBStrFromAnsiPtr(di.Name)
-    device.dType = GetDeviceType(di.flags)
+    device.dtype = GetDeviceType(di.flags)
     
     If (di.flags And BASS_DEVICE_LOOPBACK) Then device.dIsLoopback = True
     If (di.flags And BASS_DEVICE_ENABLED) Then device.dIsEnabled = True
@@ -136,7 +136,7 @@ Do While BASS_RecordGetDeviceInfo(a, di)
     device.dInput = True
     device.dDriver = VBStrFromAnsiPtr(di.driver)
     device.dName = VBStrFromAnsiPtr(di.Name)
-    device.dType = GetDeviceType(di.flags)
+    device.dtype = GetDeviceType(di.flags)
     
     If (di.flags And BASS_DEVICE_LOOPBACK) Then device.dIsLoopback = True
     If (di.flags And BASS_DEVICE_ENABLED) Then device.dIsEnabled = True
@@ -186,6 +186,7 @@ End If
 ' Load plugins
 Call BASS_PluginLoad(App.path & "\basscd.dll", 0)
 Call BASS_PluginLoad(App.path & "\bassflac.dll", 0)
+Call BASS_PluginLoad(App.path & "\basswma.dll", 0)
 Call BASS_PluginLoad(App.path & "\basswasapi.dll", 0)
 
 Call GetListOfDevices

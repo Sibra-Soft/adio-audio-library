@@ -45,7 +45,7 @@ Attribute VB_Exposed = True
 '// FileType        : Microsoft Visual Basic 6 - Usercontrol
 '// Author          : Alex van den Berg
 '// Created         : 28-10-2023
-'// Last Modified   : 30-01-2026
+'// Last Modified   : 21-02-2026
 '// Copyright       : Sibra-Soft
 '// Description     : Usercontrol for audio playback
 '////////////////////////////////////////////////////////////////
@@ -67,7 +67,7 @@ Public Event Stopped()
 Public Event Playing()
 Public Event StartPlay()
 Public Event MediaEnded()
-Public Event NewMediaFile(File As String)
+Public Event NewMediaFile(file As String)
 Public Event NewStream()
 Public Event Error(Description As String, Code As Long)
 Public Event Fading(Progress As Integer)
@@ -157,27 +157,29 @@ End Sub
 Public Function GetProperties() As mdlAdioProperties
 Set GetProperties = modAdio.GetProperties(MediaChannel)
 End Function
-Public Function LoadFile(File As String) As Boolean
+Public Function LoadFile(file As String) As Boolean
 Dim Fso As New FileSystemObject
 
-If Not Helpers.FileExists(File) Then: RaiseEvent Error("File not found", 100)
-If Not CheckFileSupport(File) Then: RaiseEvent Error("File not supported", 110)
+If Not Helpers.FileExists(file) Then: RaiseEvent Error("File not found", 100)
+If Not CheckFileSupport(file) Then: RaiseEvent Error("File not supported", 110)
 
 Call BASS_ChannelFree(MediaChannel)
 
 ' Check the extension
-Select Case Fso.GetExtensionName(File)
-    Case "flac": MediaChannel = BASS_FLAC_StreamCreateFile(0&, StrPtr(File), 0&, 0&, BASS_SAMPLE_FX)
-    Case Else: MediaChannel = BASS_StreamCreateFile(0&, StrPtr(File), 0&, 0&, BASS_SAMPLE_FX)
+Select Case Fso.GetExtensionName(file)
+    Case "flac": MediaChannel = BASS_FLAC_StreamCreateFile(0&, StrPtr(file), 0&, 0&, BASS_SAMPLE_FX)
+    Case "wma": MediaChannel = BASS_WMA_StreamCreateFile(0&, StrPtr(file), 0&, 0&, BASS_SAMPLE_FX)
+    
+    Case Else: MediaChannel = BASS_StreamCreateFile(0&, StrPtr(file), 0&, 0&, BASS_SAMPLE_FX)
 End Select
 
 If MediaChannel Then
     State = AdioReady
-    LoadedFile = File
+    LoadedFile = file
     
-    RaiseEvent NewMediaFile(File)
+    RaiseEvent NewMediaFile(file)
 Else
-    RaiseEvent Error("Problem while loading file: " & File, BASS_ErrorGetCode)
+    RaiseEvent Error("Problem while loading file: " & file, BASS_ErrorGetCode)
 End If
 End Function
 

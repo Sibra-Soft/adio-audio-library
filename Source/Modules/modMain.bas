@@ -12,7 +12,7 @@ Dim Fso As New FileSystemObject
 ' Check if the file is supported by Adio
 Select Case Fso.GetExtensionName(File)
     Case "mp1", "mp2", "mp3", "wav", "ogg", "aiff", "aac", "wma", "flac": CheckFileSupport = True: Exit Function
-    Case "mid", "midi", "kar", "rmi": CheckFileSupport = True: Exit Function
+    Case "mid", "midi", "kar", "rmi", "sid", "mus": CheckFileSupport = True: Exit Function
     
     Case Else: CheckFileSupport = False
 End Select
