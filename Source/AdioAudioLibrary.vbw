@@ -1,5 +1,5 @@
 clsStringExtensions = 0, 0, 0, 0, C
-modAdio = 52, 52, 898, 592, C
+modAdio = 52, 52, 898, 592, CI
 modAdioNetRadio = 78, 78, 924, 618, C
 modBassCd = 104, 104, 950, 644, C
 modFileProp = 26, 26, 872, 566, C
@@ -28,6 +28,7 @@ modBass = 0, 0, 846, 540, C
 modBassFlac = 26, 26, 872, 566, C
 modMain = 182, 182, 1028, 722, C
 modMidiUtils = 0, 0, 0, 0, C
-modAdioMidi = 0, 0, 0, 0, C
-modSortArray = 0, 0, 0, 0, C
-modPlaylist = 0, 0, 0, 0, C
+modAdioMidi = 182, 182, 1051, 722, C
+modSortArray = 130, 130, 1005, 670, C
+modPlaylist = 78, 78, 953, 618, C
+modBassWma = 234, 234, 1103, 774, C

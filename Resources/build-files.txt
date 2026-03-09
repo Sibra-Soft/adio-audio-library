@@ -2,3 +2,5 @@
 ..\deps\basscd.dll ; .
 ..\deps\bassflac.dll ; .
 ..\deps\bassmidi.dll ; .
+..\deps\basswma.dll ; .
+..\deps\basswasapi.dll ; .
