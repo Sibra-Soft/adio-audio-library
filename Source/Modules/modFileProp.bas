@@ -10,8 +10,8 @@ Else
     FolderName = ""
 End If
 End Function
-Public Function GetFileDurationInSeconds(File As String) As Long
-Dim Hours, Minutes, Seconds As Integer
+Public Function GetFileDurationInSeconds(file As String) As Long
+Dim Hours, Minutes, seconds As Integer
 Dim TotalSeconds As Long
 Dim Fso As New FileSystemObject
 
@@ -23,8 +23,8 @@ Set objFolder = Nothing
 Set objShell = Nothing
 
 Set objShell = CreateObject("Shell.Application")
-Set objFolder = objShell.NameSpace(FolderName(File))
-Set oFile = objFolder.ParseName(Fso.GetFileName(File))
+Set objFolder = objShell.NameSpace(FolderName(file))
+Set oFile = objFolder.ParseName(Fso.GetFileName(file))
 
 If Not oFile Is Nothing Then
     Call modOS.GetWindowsVersion
@@ -37,11 +37,11 @@ If Not oFile Is Nothing Then
     If UBound(time) = 2 Then
         Hours = time(0)
         Minutes = time(1)
-        Seconds = time(2)
+        seconds = time(2)
         
         TotalSeconds = TotalSeconds + Hours * 60 * 60
         TotalSeconds = TotalSeconds + Minutes * 60
-        TotalSeconds = TotalSeconds + Seconds
+        TotalSeconds = TotalSeconds + seconds
     End If
 End If
 
