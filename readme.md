@@ -1,0 +1,1 @@
+﻿A lightweight component library for Audiostation, providing ready-to-use building blocks such as a MediaPlayer, MidiPlayer, playlists, and audio metering. Designed for easy integration and rapid development of audio applications.

@@ -1,8 +1,8 @@
-name: CI
+name: Release
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened]
+  release:
+    types: [published]
 
 jobs:
   compile:
@@ -126,4 +126,32 @@ jobs:
         shell: cmd
         run: |         
           CALL "./project/Tests/AdioLibraryTests.exe"
+
+  release:
+    runs-on: windows-latest
+    needs: test
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          path: './project'
+
+      - name: Download deploy artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: compiled-library
+          path: './project/build'
       
+      - name: Build NuGet package
+        shell: cmd
+        run: |     
+          cd ./project
+          nuget pack AdioLibrary.nuspec
+
+      - name: Publish NuGet package
+        shell: cmd
+        run: |
+          cd ./project
+          dotnet nuget add source --username alexxvandenberg --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/sibra-soft/index.json"
+          dotnet nuget push *.nupkg --source "github"

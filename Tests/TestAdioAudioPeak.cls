@@ -6,19 +6,19 @@ BEGIN
   DataSourceBehavior  = 0  'vbNone
   MTSTransactionMode  = 0  'NotAnMTSObject
 END
-Attribute VB_Name = "TestAdioCore"
+Attribute VB_Name = "TestAdioAudioPeak"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 '
-' TestAdioLibrary - Core Component
+' TestAdioLibrary - AdioAudioPeak Component
 '
 Option Explicit
 
 Implements ITestCase
 Private Function ITestCase_TestCaseInstance() As ITestCase
-    Dim objResult As New TestAdioCore
+    Dim objResult As New TestAdioAudioPeak
     Debug.Assert TypeName(objResult) = TypeName(Me)
     Set ITestCase_TestCaseInstance = objResult
 End Function
@@ -34,12 +34,11 @@ Private Sub ITestCase_RunTest( _
     EndOfTests As Boolean _
 )
     Dim objTestNum As New TestNumGenerator
-    Dim objClause As New TestAdioCore
+    Dim objClause As New TestAdioAudioPeak
     
-    TestName = "TestAdioCore"
+    TestName = "TestAdioAudioPeak"
     
     Select Case TestNum
-        Case objTestNum.NextNumber: Call TestGetDeviceList
         Case objTestNum.NextNumber: Call TestComponentInitialization
         
         Case Else
@@ -48,12 +47,8 @@ Private Sub ITestCase_RunTest( _
 End Sub
 Private Sub TestComponentInitialization()
 With Form_Test
-    AssertEqual 0, .CoreErrorCount, "No errors should be thrown after AdioCore init"
+    .AdioAudioPeak.Run
 End With
 End Sub
-Private Sub TestGetDeviceList()
-With Form_Test.AdioCore
-    AssertTrue (.GetListOfDevices.Count > 0), "Atleast 1 device should be found"
-End With
-End Sub
+
 

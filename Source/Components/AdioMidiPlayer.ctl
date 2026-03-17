@@ -97,7 +97,7 @@ Public Event StartPlay()
 Public Event Paused()
 Public Event Stopped()
 Public Event MediaEnded()
-Public Event NewMediaFile(File As String)
+Public Event NewMediaFile(file As String)
 Public Event Error(Description As String, Code As Long)
 Public Event MidiTrack(Name As String, TrackNr As Integer)
 Public Event MidiTrackAudioLevelChange(TrackNr As Integer, level As Integer)
@@ -1008,18 +1008,16 @@ End Sub
 Private Sub LoadMidiFile(strFile As String)
 MidiFile.action = MIDIFILE_CLOSE
 MidiFile.ReadOnly = True
-MidiFile.FileName = strFile
+
+MidiFile.FileName = file
+
+MidiFile.action = MIDIFILE_OPEN
 
 Call DisplayTrackNames
 Call QueueSong_ByMidi1Track
 
 HScrollPlayerTime.Value = 0
 MainStreamOption = 0
-
-LoadedFile = File
-
-RaiseEvent NewMediaFile(File)
-
 End Sub
 Private Sub MidiOutput_StreamSend()
 If gisEnd = True Then GoTo ExitEnd ' not needed at shutdown
@@ -1090,7 +1088,7 @@ If MainStreamOption <> MB_OPTIONOPENDEFAULT Then
     If MainStreamNumber <> 0 Then
         MidiOutput.StreamNumber = MainStreamNumber
         If MidiOutput.StateStreamEx(0) = MIDISTATE_CLOSED Then ' no stream
-        ElseIf HScrollPlayerTime.Tag > Trim$(Str$(time - 2 / 86400)) Then ' still scrolling two sec
+        ElseIf HScrollPlayerTime.tag > Trim$(Str$(time - 2 / 86400)) Then ' still scrolling two sec
         Else
 
             CurrentElapsedTime = (MidiOutput.StreamTimeCurrent / 1000)
@@ -1106,7 +1104,7 @@ Else
     If mGroupNumber <> 0 Then
         MidiOutput.StreamNumber = MainStreamGroup(mGroupNumber, MB_STREAMNUMBER)
         If MidiOutput.StateStreamEx(0) = MIDISTATE_CLOSED Then ' no stream
-        ElseIf HScrollPlayerTime.Tag > Trim$(Str$(time - 2 / 86400)) Then ' still scrolling two sec
+        ElseIf HScrollPlayerTime.tag > Trim$(Str$(time - 2 / 86400)) Then ' still scrolling two sec
         Else
         
             CurrentElapsedTime = (MidiOutput.StreamTimeCurrent / 1000)

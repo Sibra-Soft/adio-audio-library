@@ -68,7 +68,7 @@ Public Event Stopped()
 Public Event Playing()
 Public Event StartPlay()
 Public Event MediaEnded()
-Public Event NewMediaFile(File As String)
+Public Event NewMediaFile(file As String)
 Public Event NewStream()
 Public Event Error(Description As String, Code As Long)
 Public Event Fading(Progress As Integer)
@@ -216,11 +216,11 @@ End Function
 '* @param String strFile: The file to load
 '* @returns Boolean: True if the file is loaded successfully
 '*
-Public Function LoadFile(strFile As String) As Boolean
+Public Function LoadFile(file As String) As Boolean
 Dim Fso As New FileSystemObject
 
-If Not Helpers.FileExists(strFile) Then: RaiseEvent Error("File not found", 100)
-If Not CheckFileSupport(strFile) Then: RaiseEvent Error("File not supported", 110)
+If Not Helpers.FileExists(file) Then: RaiseEvent Error("File not found", 100)
+If Not CheckFileSupport(file) Then: RaiseEvent Error("File not supported", 110)
 
 Call BASS_ChannelFree(MediaChannel)
 
@@ -242,14 +242,11 @@ End Select
 
 If MediaChannel Then
     State = AdioReady
-    LoadedFile = File
+    LoadedFile = file
     
-    RaiseEvent NewMediaFile(File)
+    RaiseEvent NewMediaFile(file)
 Else
     RaiseEvent Error("Problem while loading file: " & File, BASS_ErrorGetCode)
-    LoadedFile = strFile
-    
-    RaiseEvent NewMediaFile(strFile)
 End If
 End Function
 Private Sub Label_StreamTitle_Change()
