@@ -1,5 +1,5 @@
 clsStringExtensions = 26, 26, 963, 566, C
-modAdio = 52, 52, 898, 592, CI
+modAdio = 52, 52, 898, 592, C
 modAdioNetRadio = 78, 78, 924, 618, C
 modBassCd = 104, 104, 950, 644, C
 modFileProp = 26, 26, 872, 566, C
@@ -34,3 +34,4 @@ modPlaylist = 78, 78, 953, 618, C
 modBassWma = 234, 234, 1103, 774, C
 modPlayMus = 26, 26, 963, 566, C
 modPlaySid = 52, 52, 989, 592, C
+modExternalApp = 130, 130, 1067, 670, C

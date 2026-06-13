@@ -91,11 +91,11 @@ End Sub
 '* @param String File: The full file path of the file
 '* @return mdlAdioPlaylistItem: The item of the playlist that was found as duplicate
 '*
-Private Function CheckIfItemExists(File As String) As Variant
+Private Function CheckIfItemExists(file As String) As Variant
 Dim PlaylistItem As mdlAdioPlaylistItem
 
 For Each PlaylistItem In CurList
-    If PlaylistItem.LocalFile = File Then
+    If PlaylistItem.LocalFile = file Then
         Set CheckIfItemExists = PlaylistItem
         Exit Function
     End If
@@ -127,7 +127,7 @@ End Function
 '*
 Public Function AddMultipleFiles(Files As String)
 Dim Lines() As String
-Dim i As Long
+Dim I As Long
 Dim ItemsCount As Long
 
 Lines = Split(Files, vbNewLine)
@@ -135,10 +135,10 @@ ItemsCount = UBound(Lines)
 
 AddingMultipleFiles = True
 
-For i = 0 To UBound(Lines)
-    Call AddFile(Lines(i))
+For I = 0 To UBound(Lines)
+    Call AddFile(Lines(I))
     
-    RaiseEvent Progress(i, ItemsCount, False)
+    RaiseEvent Progress(I, ItemsCount, False)
     
     DoEvents
 Next
@@ -154,17 +154,17 @@ End Function
 '* @param Long InsertAt: The position you want to add the file to the playlist
 '* @return mdlAdioPlaylistItem: A model containging all the properties of the playlist item
 '*
-Public Function AddFile(File As String, Optional InsertAt As Long = 0) As mdlAdioPlaylistItem
+Public Function AddFile(file As String, Optional InsertAt As Long = 0) As mdlAdioPlaylistItem
 Dim PlaylistItem As New mdlAdioPlaylistItem
 Dim Fso As New FileSystemObject
 
-If StringHelpers.IsNullOrWhiteSpace(File) Then: Exit Function
-If Not Helpers.FileExists(File) Then: RaiseEvent Error("File not found: " & File, 100): Exit Function
-If Not CheckFileSupport(File) Then: RaiseEvent Error("File not supported: " & File, 110): Exit Function
+If StringHelpers.IsNullOrWhiteSpace(file) Then: Exit Function
+If Not Helpers.FileExists(file) Then: RaiseEvent Error("File not found: " & file, 100): Exit Function
+If Not CheckFileSupport(file) Then: RaiseEvent Error("File not supported: " & file, 110): Exit Function
 If Not AllowDuplicateItems Then
     Dim Exists As Variant
     
-    Set Exists = CheckIfItemExists(File)
+    Set Exists = CheckIfItemExists(file)
     
     If Not Exists Is Nothing Then
         Set AddFile = Exists
@@ -173,11 +173,11 @@ If Not AllowDuplicateItems Then
     End If
 End If
 
-PlaylistItem.LocalFile = File
-PlaylistItem.FileExtension = Fso.GetExtensionName(File)
-PlaylistItem.FileName = Fso.GetFileName(File)
-PlaylistItem.RuntimeInSeconds = modAdio.AdioReadAudioProperty(File, pDurationInSeconds)
-PlaylistItem.RuntimeString = modAdio.AdioReadAudioProperty(File, pDurationString)
+PlaylistItem.LocalFile = file
+PlaylistItem.FileExtension = Fso.GetExtensionName(file)
+PlaylistItem.FileName = Fso.GetFileName(file)
+PlaylistItem.RuntimeInSeconds = modAdio.AdioReadAudioProperty(file, pDurationInSeconds)
+PlaylistItem.RuntimeString = modAdio.AdioReadAudioProperty(file, pDurationString)
 PlaylistItem.nR = CurList.Count + 1
 
 CurList.Add PlaylistItem
@@ -302,12 +302,12 @@ End Function
 '* @param String File: The playlist file you want to load
 '* @param enumAdioPlaylistType ListType: The playlist type you want to load
 '*
-Public Sub LoadPlaylist(File As String, ListType As enumAdioPlaylistType)
+Public Sub LoadPlaylist(file As String, ListType As enumAdioPlaylistType)
 Select Case ListType
-    Case enumAdioPlaylistType.PLAYLIST_APL: Call AddMultipleFiles(modPlaylist.LoadAplFile(File)) ' Audiostation
-    Case enumAdioPlaylistType.PLAYLIST_M3U: Call AddMultipleFiles(modPlaylist.LoadM3uFile(File)) ' M3u file
-    Case enumAdioPlaylistType.PLAYLIST_PLS: Call AddMultipleFiles(modPlaylist.LoadPlsFile(File)) ' Pls file
-    Case enumAdioPlaylistType.PLAYLIST_WPL: Call AddMultipleFiles(modPlaylist.LoadWplFile(File)) ' Windows Media Player
+    Case enumAdioPlaylistType.PLAYLIST_APL: Call AddMultipleFiles(modPlaylist.LoadAplFile(file)) ' Audiostation
+    Case enumAdioPlaylistType.PLAYLIST_M3U: Call AddMultipleFiles(modPlaylist.LoadM3uFile(file)) ' M3u file
+    Case enumAdioPlaylistType.PLAYLIST_PLS: Call AddMultipleFiles(modPlaylist.LoadPlsFile(file)) ' Pls file
+    Case enumAdioPlaylistType.PLAYLIST_WPL: Call AddMultipleFiles(modPlaylist.LoadWplFile(file)) ' Windows Media Player
 End Select
 
 RaiseEvent ListLoadFinished
@@ -319,12 +319,12 @@ End Sub
 '* @param enumAdioPlaylistType ListType: The type of playlist you want to use when saving
 '* @return Boolean: Tells if the playlist has been saved
 '*
-Public Function SavePlaylist(File As String, ListType As enumAdioPlaylistType) As Boolean
+Public Function SavePlaylist(file As String, ListType As enumAdioPlaylistType) As Boolean
 Select Case ListType
-    Case enumAdioPlaylistType.PLAYLIST_APL: SavePlaylist = modPlaylist.SaveAplPlaylist(File, GetList) ' Audiostation
-    Case enumAdioPlaylistType.PLAYLIST_M3U: SavePlaylist = modPlaylist.SaveM3uPlaylist(File, GetList) ' M3u file
-    Case enumAdioPlaylistType.PLAYLIST_PLS: SavePlaylist = modPlaylist.SavePlsPlaylist(File, GetList) ' Pls file
-    Case enumAdioPlaylistType.PLAYLIST_WPL: SavePlaylist = modPlaylist.SaveWplPlaylist(File, GetList) ' Windows Media Player
+    Case enumAdioPlaylistType.PLAYLIST_APL: SavePlaylist = modPlaylist.SaveAplPlaylist(file, GetList) ' Audiostation
+    Case enumAdioPlaylistType.PLAYLIST_M3U: SavePlaylist = modPlaylist.SaveM3uPlaylist(file, GetList) ' M3u file
+    Case enumAdioPlaylistType.PLAYLIST_PLS: SavePlaylist = modPlaylist.SavePlsPlaylist(file, GetList) ' Pls file
+    Case enumAdioPlaylistType.PLAYLIST_WPL: SavePlaylist = modPlaylist.SaveWplPlaylist(file, GetList) ' Windows Media Player
 End Select
 
 RaiseEvent ListSaveFinished

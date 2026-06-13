@@ -85,8 +85,8 @@ End Function
 '* Set the balance of the speaker audio
 '* @param Integer Value: Balance value between -1000 and 1000
 '*
-Public Sub SetBalance(value As Integer)
-Call modAdio.SetBalance(MediaChannel, value)
+Public Sub SetBalance(Value As Integer)
+Call modAdio.SetBalance(MediaChannel, Value)
 End Sub
 '*
 '* Set the playback device based on a id
@@ -128,8 +128,8 @@ End Sub
 '* Set the volume of the mediaplayer
 '* @param Integer value: 0 to 100 of the current volume
 '*
-Public Sub SetVolume(value As Integer)
-Call modAdio.SetVolume(MediaChannel, value)
+Public Sub SetVolume(Value As Integer)
+Call modAdio.SetVolume(MediaChannel, Value)
 End Sub
 '*
 '* Get the current volume amount
@@ -156,8 +156,8 @@ End Function
 '* @param enumAdioSeekDirection direction: The direction of the seek (forward or backward)
 '* @param Integer seconds: The amount of seconds to seek
 '*
-Public Sub SeekBySeconds(direction As enumAdioSeekDirection, Optional seconds As Integer = 10)
-Call modAdio.AdioSeekBySeconds(MediaChannel, direction, seconds)
+Public Sub SeekBySeconds(Direction As enumAdioSeekDirection, Optional seconds As Integer = 10)
+Call modAdio.AdioSeekBySeconds(MediaChannel, Direction, seconds)
 End Sub
 '*
 '* Start playback
@@ -216,11 +216,11 @@ End Function
 '* @param String strFile: The file to load
 '* @returns Boolean: True if the file is loaded successfully
 '*
-Public Function LoadFile(file As String) As Boolean
+Public Function LoadFile(strFile As String) As Boolean
 Dim Fso As New FileSystemObject
 
-If Not Helpers.FileExists(file) Then: RaiseEvent Error("File not found", 100)
-If Not CheckFileSupport(file) Then: RaiseEvent Error("File not supported", 110)
+If Not Helpers.FileExists(strFile) Then: RaiseEvent Error("File not found", 100)
+If Not CheckFileSupport(strFile) Then: RaiseEvent Error("File not supported", 110)
 
 Call BASS_ChannelFree(MediaChannel)
 
@@ -242,11 +242,11 @@ End Select
 
 If MediaChannel Then
     State = AdioReady
-    LoadedFile = file
+    LoadedFile = strFile
     
-    RaiseEvent NewMediaFile(file)
+    RaiseEvent NewMediaFile(strFile)
 Else
-    RaiseEvent Error("Problem while loading file: " & File, BASS_ErrorGetCode)
+    RaiseEvent Error("Problem while loading file: " & strFile, BASS_ErrorGetCode)
 End If
 End Function
 Private Sub Label_StreamTitle_Change()
