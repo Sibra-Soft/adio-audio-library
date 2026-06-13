@@ -6,7 +6,7 @@ Option Explicit
 '// FileType        : Microsoft Visual Basic 6 - Module
 '// Author          : Alex van den Berg
 '// Created         : 15-03-2026
-'// Last Modified   : 16-03-2026
+'// Last Modified   : 18-03-2026
 '// Copyright       : Sibra-Soft
 '// Description     : *.mus file play module
 '////////////////////////////////////////////////////////////////
@@ -40,6 +40,7 @@ Call AudioInit
 
 For I = LBound(Notes) To UBound(Notes)
     Note Notes(I)
+    DoEvents
 Next I
 End Sub
 '*
@@ -74,7 +75,7 @@ End If
 Call BASS_Free
 End Sub
 Private Sub Note(Note As Note)
-Dim T As Long, tie As Integer
+Dim t As Long, tie As Integer
 
 DoEvents
 
@@ -129,7 +130,7 @@ End Sub
 '* @returns Boolean: True if the file is loaded successfully
 '*
 Public Sub LoadFile(strFile As String)
-Dim tmpStr As String, T As Long, Resp As Long, tBool As String, tBoolB As String
+Dim tmpStr As String, t As Long, Resp As Long, tBool As String, tBoolB As String
 Dim asBinary As Boolean, strOct As String, tmpNoteStorage() As Integer, y As Integer
 Dim tmpLenStorage() As Integer, strNot As String, strLen As String, x As Integer
 
@@ -145,35 +146,35 @@ If Err.number = 0 Then
         asBinary = (tmpStr = "BIN")
         
         If asBinary Then
-            Get #1, , T
-            tmpStr = T
-            Get #1, , T
+            Get #1, , t
+            tmpStr = t
+            Get #1, , t
             
             ReDim Notes(1 To tmpStr)
             
             tmpStr = Space(UBound(Notes) / 8)
             If UBound(Notes) / 8 > Len(tmpStr) Then tmpStr = tmpStr & " "
             Get #1, , tmpStr
-            For T = 1 To Len(tmpStr)
-                tBoolB = tBoolB & format(DecToBin(Asc(mId(tmpStr, T, 1))), "00000000")
-            Next T
+            For t = 1 To Len(tmpStr)
+                tBoolB = tBoolB & format(DecToBin(Asc(mId(tmpStr, t, 1))), "00000000")
+            Next t
 
             tmpStr = Space(UBound(Notes) / 8)
             If UBound(Notes) / 8 > Len(tmpStr) Then tmpStr = tmpStr & " "
             Get #1, , tmpStr
-            For T = 1 To Len(tmpStr)
-                tBool = tBool & format(DecToBin(Asc(mId(tmpStr, T, 1))), "00000000")
-            Next T
+            For t = 1 To Len(tmpStr)
+                tBool = tBool & format(DecToBin(Asc(mId(tmpStr, t, 1))), "00000000")
+            Next t
 
             tmpStr = Space(UBound(Notes) / 2)
             If UBound(Notes) / 2 > Len(tmpStr) Then tmpStr = tmpStr & " "
             Get #1, , tmpStr
-            For T = 1 To Len(tmpStr)
-                strOct = strOct & format(DecToBin(Asc(mId(tmpStr, T, 1))), "00000000")
-            Next T
+            For t = 1 To Len(tmpStr)
+                strOct = strOct & format(DecToBin(Asc(mId(tmpStr, t, 1))), "00000000")
+            Next t
 
-            Get #1, , T
-            ReDim tmpNoteStorage(T)
+            Get #1, , t
+            ReDim tmpNoteStorage(t)
             Get #1, , tmpNoteStorage
             x = Len(DecToBin(Str(UBound(tmpNoteStorage))))
 
@@ -181,12 +182,12 @@ If Err.number = 0 Then
             If x * UBound(Notes) / 8 > Len(tmpStr) Then tmpStr = tmpStr & " "
 
             Get #1, , tmpStr
-            For T = 1 To Len(tmpStr)
-                strNot = strNot & format(DecToBin(Asc(mId(tmpStr, T, 1))), "00000000")
-            Next T
+            For t = 1 To Len(tmpStr)
+                strNot = strNot & format(DecToBin(Asc(mId(tmpStr, t, 1))), "00000000")
+            Next t
 
-            Get #1, , T
-            ReDim tmpLenStorage(T)
+            Get #1, , t
+            ReDim tmpLenStorage(t)
             Get #1, , tmpLenStorage
             y = Len(DecToBin(Str(UBound(tmpLenStorage))))
 
@@ -194,32 +195,32 @@ If Err.number = 0 Then
             If y * UBound(Notes) / 8 > Len(tmpStr) Then tmpStr = tmpStr & " "
 
             Get #1, , tmpStr
-            For T = 1 To Len(tmpStr)
-                strLen = strLen & format(DecToBin(Asc(mId(tmpStr, T, 1))), "00000000")
-            Next T
+            For t = 1 To Len(tmpStr)
+                strLen = strLen & format(DecToBin(Asc(mId(tmpStr, t, 1))), "00000000")
+            Next t
 
-            For T = 1 To UBound(Notes)
-                With Notes(T)
-                    .Staccato = (mId(tBoolB, T, 1) = "1")
-                    .tie = (mId(tBool, T, 1) = "1")
-                    .octave = BinToDec(mId(strOct, (T - 1) * 4 + 1, 4)) - 4
-                    .Note = tmpNoteStorage(BinToDec(mId(strNot, (T - 1) * x + 1, x)))
-                    .length = tmpLenStorage(BinToDec(mId(strLen, (T - 1) * y + 1, y)))
+            For t = 1 To UBound(Notes)
+                With Notes(t)
+                    .Staccato = (mId(tBoolB, t, 1) = "1")
+                    .tie = (mId(tBool, t, 1) = "1")
+                    .octave = BinToDec(mId(strOct, (t - 1) * 4 + 1, 4)) - 4
+                    .Note = tmpNoteStorage(BinToDec(mId(strNot, (t - 1) * x + 1, x)))
+                    .length = tmpLenStorage(BinToDec(mId(strLen, (t - 1) * y + 1, y)))
                 End With
-            Next T
+            Next t
         End If
     Close #1
 End If
 End Sub
 Private Function BinToDec(bin As String) As Long
-Dim T As Integer
+Dim t As Integer
 
-For T = 1 To Len(bin)
-    BinToDec = BinToDec * 2 + Val(mId(bin, T, 1))
-Next T
+For t = 1 To Len(bin)
+    BinToDec = BinToDec * 2 + Val(mId(bin, t, 1))
+Next t
 End Function
 Private Function DecToBin(ByVal dec As String) As String
-Dim T As Integer
+Dim t As Integer
 
 Do While dec > 0
      DecToBin = IIf(dec / 2 = Int(dec / 2), "0", "1") & DecToBin
