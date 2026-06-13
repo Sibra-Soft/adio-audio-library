@@ -9,6 +9,12 @@ Begin VB.UserControl AdioMidiPlayer
    InvisibleAtRuntime=   -1  'True
    ScaleHeight     =   3600
    ScaleWidth      =   4800
+   Begin VB.Timer Timer_Playing_General 
+      Enabled         =   0   'False
+      Interval        =   500
+      Left            =   675
+      Top             =   1890
+   End
    Begin VB.HScrollBar HScrollPlayerTime 
       Height          =   285
       Left            =   405
@@ -17,10 +23,10 @@ Begin VB.UserControl AdioMidiPlayer
       Visible         =   0   'False
       Width           =   960
    End
-   Begin VB.Timer Timer_Playing 
+   Begin VB.Timer Timer_Playing_Midi 
       Enabled         =   0   'False
       Interval        =   500
-      Left            =   1215
+      Left            =   135
       Top             =   1890
    End
    Begin MidiioLib.MIDIOutput MidiOutput 
@@ -160,7 +166,7 @@ Private Sub DisplayTrackNames()
 If gisEnd = True Then GoTo ExitEnd ' not needed at shutdown
 
 Dim m As Integer
-Dim T As Integer
+Dim t As Integer
 Dim I As Integer
 
 If MidiFile.NumberOfTracks = 1 Then
@@ -172,14 +178,14 @@ maxt = MidiFile.NumberOfTracks
 
 If maxt > 32 Then maxt = 32
 
-T = 200
-If maxt > 16 Then T = 200
+t = 200
+If maxt > 16 Then t = 200
 
-For T = 1 To maxt
-    If (T >= 2) Or (MidiFile.NumberOfTracks = 1) Then
-        RaiseEvent MidiTrack(Trim(GetTrackName(T)), T - 1)
+For t = 1 To maxt
+    If (t >= 2) Or (MidiFile.NumberOfTracks = 1) Then
+        RaiseEvent MidiTrack(Trim(GetTrackName(t)), t - 1)
     End If
-Next T
+Next t
 
 Exit Sub
 ExitEnd: ' prevent multithreading issues caused by doevents or background processes
@@ -782,9 +788,6 @@ Else
     If MidiOutput.State <> MIDISTATE_CLOSED Then MidiOutput.MessageEventPause = backupmessageventpause ' restore
 End If
 
-State = AdioPaused
-RaiseEvent Paused
-
 ExitSection:
     Call MidiStackPopCommon(backupelement, MidiOutput)
 
@@ -830,11 +833,7 @@ Else
     End If
 End If
 
-State = AdioStopped
-RaiseEvent Stopped
-
 HScrollPlayerTime.Value = 0
-Timer_Playing.Enabled = False
 
 ExitSection:
     Call MidiStackPopCommon(backupelement, MidiOutput)
@@ -880,13 +879,6 @@ Else
     Next mGroupNumber
 End If
 
-State = AdioPlaying
-
-RaiseEvent StartPlay
-RaiseEvent Playing
-
-Timer_Playing.Enabled = True
-
 ExitSection:
     Call MidiStackPopCommon(backupelement, MidiOutput)
 Exit Sub
@@ -894,9 +886,12 @@ Exit Sub
 ExitEnd: ' prevent multithreading issues caused by doevents or background processes
 End Sub
 Public Sub StartPlay()
+Dim IsMidi As Boolean
+
 Select Case LoadedFileType
 
     Case 0, 1
+        IsMidi = True
         Call StartMidiPlayback
     
     Case 2
@@ -907,27 +902,60 @@ Select Case LoadedFileType
         Call modPlayMus.StartPlay
 
 End Select
+
+State = AdioPlaying
+
+RaiseEvent StartPlay
+RaiseEvent Playing
+
+If IsMidi Then
+    Timer_Playing_Midi.Enabled = True
+Else
+    Timer_Playing_General.Enabled = True
+End If
 End Sub
 Public Sub StopPlay()
+Dim IsMidi As Boolean
+
 Select Case LoadedFileType
 
     Case 0, 1
+        IsMidi = True
         Call StopMidiPlayback
     
     Case 2
-        Call modPlaySid.StartPlay
+        Call modPlaySid.StopPlay
     
     Case 3
         Call modPlayMus.StopPlay
 
 End Select
+
+State = AdioStopped
+RaiseEvent Stopped
+
+If IsMidi Then
+    Timer_Playing_Midi.Enabled = False
+Else
+    Timer_Playing_General.Enabled = False
+End If
 End Sub
 Public Sub PausePlay()
+Dim IsMidi As Boolean
+
 Select Case LoadedFileType
 
-    Case 0, 1: Call PauseMidiPlayback
+    Case 0, 1
+        IsMidi = True
+        Call PauseMidiPlayback
+        
+    Case 2
+        Call modPlaySid.PausePlay
 
 End Select
+
+State = AdioPaused
+RaiseEvent Paused
 End Sub
 Public Sub SeekBySeconds(Direction As enumAdioSeekDirection, Optional seconds As Integer = 10)
 Select Case Direction
@@ -951,6 +979,9 @@ If MidiOutput.ErrorCode = 0 Then: RaiseEvent Ready
 State = AdioReady
 End Sub
 Private Sub UnloadComponent()
+modPlaySid.StopPlay
+modPlayMus.StopPlay
+
 If MidiOutput.State <> MIDISTATE_CLOSED Then
     StopPlay ' clear any stuck notes
     MidiOutput.action = MIDIOUT_CLOSE
@@ -983,7 +1014,7 @@ If Not CheckFileSupport(strFile) Then: RaiseEvent Error("File not supported", 11
 
 Select Case Fso.GetExtensionName(strFile)
 
-    Case "mid"
+    Case "mid", "midi"
         LoadedFileType = [MID - Midi File]
         Call LoadMidiFile(strFile)
         
@@ -1008,9 +1039,7 @@ End Sub
 Private Sub LoadMidiFile(strFile As String)
 MidiFile.action = MIDIFILE_CLOSE
 MidiFile.ReadOnly = True
-
-MidiFile.FileName = file
-
+MidiFile.FileName = strFile
 MidiFile.action = MIDIFILE_OPEN
 
 Call DisplayTrackNames
@@ -1070,61 +1099,6 @@ For Channel = 1 To TOTAL_MIDI_CHANNELS
 Next Channel
 
 Exit Sub
-ExitEnd: ' prevent multithreading issues caused by doevents or background processes
-End Sub
-
-Private Sub Timer_Playing_Timer()
-If gisEnd = True Then GoTo ExitEnd ' not needed at shutdown
-
-Dim mGroupNumber As Integer
-Dim nTimeExpectedStream As Long
-Dim nTime As Long
-Dim backupelement As Integer
-
-Call MidiStackPushCommon(backupelement, MidiOutput)
-
-If MainStreamOption <> MB_OPTIONOPENDEFAULT Then
-    ' Midi format 0
-    If MainStreamNumber <> 0 Then
-        MidiOutput.StreamNumber = MainStreamNumber
-        If MidiOutput.StateStreamEx(0) = MIDISTATE_CLOSED Then ' no stream
-        ElseIf HScrollPlayerTime.tag > Trim$(Str$(time - 2 / 86400)) Then ' still scrolling two sec
-        Else
-
-            CurrentElapsedTime = (MidiOutput.StreamTimeCurrent / 1000)
-            HScrollPlayerTime.Value = CInt(MidiOutput.StreamTimeCurrent / 1000)
-            
-        End If
-    End If
-
-Else
-    ' Midi format 1
-    mGroupNumber = UBound(MainStreamGroup, 1) ' last is master track
-    
-    If mGroupNumber <> 0 Then
-        MidiOutput.StreamNumber = MainStreamGroup(mGroupNumber, MB_STREAMNUMBER)
-        If MidiOutput.StateStreamEx(0) = MIDISTATE_CLOSED Then ' no stream
-        ElseIf HScrollPlayerTime.tag > Trim$(Str$(time - 2 / 86400)) Then ' still scrolling two sec
-        Else
-        
-            CurrentElapsedTime = (MidiOutput.StreamTimeCurrent / 1000)
-            HScrollPlayerTime.Value = CInt(MidiOutput.StreamTimeCurrent / 1000)
-            
-        End If
-    End If
-End If
-
-If CurrentElapsedTime = Runtime Then
-    State = AdioEnded
-    
-    RaiseEvent MediaEnded
-    Timer_Playing.Enabled = False
-End If
-
-ExitSection:
-    Call MidiStackPopCommon(backupelement, MidiOutput)
-    Exit Sub
-
 ExitEnd: ' prevent multithreading issues caused by doevents or background processes
 End Sub
 Private Sub ScrollBarPlayerTime_Forward0Common()
@@ -1210,6 +1184,66 @@ ExitSection:
     Exit Sub
 ExitEnd: ' prevent multithreading issues caused by doevents or background processes
 End Sub
+
+Private Sub Timer_Playing_General_Timer()
+CurrentElapsedTime = CurrentElapsedTime + 1
+End Sub
+
+Private Sub Timer_Playing_Midi_Timer()
+If gisEnd = True Then GoTo ExitEnd ' not needed at shutdown
+
+Dim mGroupNumber As Integer
+Dim nTimeExpectedStream As Long
+Dim nTime As Long
+Dim backupelement As Integer
+
+Call MidiStackPushCommon(backupelement, MidiOutput)
+
+If MainStreamOption <> MB_OPTIONOPENDEFAULT Then
+    ' Midi format 0
+    If MainStreamNumber <> 0 Then
+        MidiOutput.StreamNumber = MainStreamNumber
+        If MidiOutput.StateStreamEx(0) = MIDISTATE_CLOSED Then ' no stream
+        ElseIf HScrollPlayerTime.tag > Trim$(Str$(time - 2 / 86400)) Then ' still scrolling two sec
+        Else
+
+            CurrentElapsedTime = (MidiOutput.StreamTimeCurrent / 1000)
+            HScrollPlayerTime.Value = CInt(MidiOutput.StreamTimeCurrent / 1000)
+            
+        End If
+    End If
+
+Else
+    ' Midi format 1
+    mGroupNumber = UBound(MainStreamGroup, 1) ' last is master track
+    
+    If mGroupNumber <> 0 Then
+        MidiOutput.StreamNumber = MainStreamGroup(mGroupNumber, MB_STREAMNUMBER)
+        If MidiOutput.StateStreamEx(0) = MIDISTATE_CLOSED Then ' no stream
+        ElseIf HScrollPlayerTime.tag > Trim$(Str$(time - 2 / 86400)) Then ' still scrolling two sec
+        Else
+        
+            CurrentElapsedTime = (MidiOutput.StreamTimeCurrent / 1000)
+            HScrollPlayerTime.Value = CInt(MidiOutput.StreamTimeCurrent / 1000)
+            
+        End If
+    End If
+End If
+
+If CurrentElapsedTime = Runtime Then
+    State = AdioEnded
+    
+    RaiseEvent MediaEnded
+    Timer_Playing_Midi.Enabled = False
+End If
+
+ExitSection:
+    Call MidiStackPopCommon(backupelement, MidiOutput)
+    Exit Sub
+
+ExitEnd: ' prevent multithreading issues caused by doevents or background processes
+End Sub
+
 Private Sub UserControl_Initialize()
 MidiOutput.ErrorScheme = 1
 MidiOutput.ErrorHalt = True
