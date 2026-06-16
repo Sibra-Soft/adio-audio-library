@@ -1012,7 +1012,7 @@ Dim Fso As New FileSystemObject
 If Not Helpers.FileExists(strFile) Then: RaiseEvent Error("File not found", 100)
 If Not CheckFileSupport(strFile) Then: RaiseEvent Error("File not supported", 110)
 
-Select Case Fso.GetExtensionName(strFile)
+Select Case LCase(Fso.GetExtensionName(strFile))
 
     Case "mid", "midi"
         LoadedFileType = [MID - Midi File]
