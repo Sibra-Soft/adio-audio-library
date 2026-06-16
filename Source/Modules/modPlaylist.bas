@@ -1,16 +1,16 @@
 Attribute VB_Name = "modPlaylist"
-Public Function SavePlsPlaylist(File As String, list As Collection) As Boolean
+Public Function SavePlsPlaylist(file As String, list As Collection) As Boolean
 Dim plsItem As mdlAdioPlaylistItem
 
 For Each plsItem In list
-    Call Helpers.INIWrite("playlist", "File" & i, plsItem.LocalFile, File)
+    Call Helpers.INIWrite("playlist", "File" & I, plsItem.LocalFile, file)
 Next
 
-Call Extensions.INIWrite("playlist", "NumberOfEntries", lstFormList.ListItems.Count, File)
-Call Extensions.INIWrite("playlist", "Version", 2, File)
+Call Extensions.INIWrite("playlist", "NumberOfEntries", lstFormList.ListItems.Count, file)
+Call Extensions.INIWrite("playlist", "Version", 2, file)
 
 ' Check if the playlist has been saved
-If Helpers.FileExists(File) Then
+If Helpers.FileExists(file) Then
     SavePlsPlaylist = True
 Else
     SavePlsPlaylist = False
@@ -35,10 +35,10 @@ Else
     SaveAplPlaylist = False
 End If
 End Function
-Public Function SaveM3uPlaylist(File As String, list As Collection) As Boolean
+Public Function SaveM3uPlaylist(file As String, list As Collection) As Boolean
 Dim plsItem As mdlAdioPlaylistItem
 
-Open File For Output As #FN
+Open file For Output As #FN
     Print #FN, "#EXTM3U"
     
     For Each plsItem In list
@@ -49,19 +49,19 @@ Open File For Output As #FN
 Close #FN
 
 ' Check if the playlist has been saved
-If Helpers.FileExists(File) Then
+If Helpers.FileExists(file) Then
     SaveM3uPlaylist = True
 Else
     SaveM3uPlaylist = False
 End If
 End Function
-Public Function SaveWplPlaylist(File As String, list As Collection) As Boolean
+Public Function SaveWplPlaylist(file As String, list As Collection) As Boolean
 Dim PlaylistName As String
 Dim plsItem As mdlAdioPlaylistItem
 
-PlaylistName = Helpers.GetFileNameFromFilePath(File, False)
+PlaylistName = Helpers.GetFileNameFromFilePath(file, False)
 
-Open File For Output As #1
+Open file For Output As #1
     Print #1, "<?wpl version="; 1#; "?>"
     Print #1, "<smil>"
     Print #1, "    <head>"
@@ -81,31 +81,31 @@ Open File For Output As #1
 Close #1
 
 ' Check if the playlist has been saved
-If Ext.FileExists(File) Then
+If Ext.FileExists(file) Then
     SaveWplPlaylist = True
 Else
     SaveWplPlaylist = False
 End If
 End Function
-Public Function LoadAplFile(File As String) As String
+Public Function LoadAplFile(file As String) As String
 Dim StringListOfFiles As String
-StringListOfFiles = Helpers.FileGetContents(File)
+StringListOfFiles = Helpers.FileGetContents(file)
 
 LoadAplFile = StringListOfFiles
 End Function
-Public Function LoadWplFile(File As String) As String
+Public Function LoadWplFile(file As String) As String
 Dim Lines
 Dim FileContent As String
-Dim i As Integer
+Dim I As Integer
 Dim Media As String
 Dim StringListOfFiles As String
 
 FileContent = Extensions.FileGetContents(FileName)
 Lines = Split(FileContent, vbNewLine)
 
-For i = 0 To UBound(Lines)
-    If InStr(1, Lines(i), "<media") Then
-        Media = StrExt.Between("<media", "/>", Trim(Lines(i)))
+For I = 0 To UBound(Lines)
+    If InStr(1, Lines(I), "<media") Then
+        Media = StrExt.Between("<media", "/>", Trim(Lines(I)))
         Media = Replace(Media, Chr(34), vbNullString)
         Media = Replace(Media, "media src=", vbNullString)
         
@@ -115,7 +115,7 @@ Next
 
 LoadWplFile = StringListOfFiles
 End Function
-Public Function LoadM3uFile(File As String) As String
+Public Function LoadM3uFile(file As String) As String
 Dim TextLine As String, FN As Integer
 Dim StringListOfFiles As String
 
@@ -141,15 +141,15 @@ Close #FN
 
 LoadM3uFile = StringListOfFiles
 End Function
-Public Function LoadPlsFile(File As String) As String
-Dim i As Integer
+Public Function LoadPlsFile(file As String) As String
+Dim I As Integer
 Dim strNumberofEntries As Integer
 Dim StringListOfFiles As String
 
 strNumberofEntries = Extensions.INIRead("playlist", "NumberOfEntries", strPlaylistFile)
 
-For i = 1 To strNumberofEntries
-    StringListOfFiles = StringListOfFiles & Extensions.INIRead("playlist", "File" & i, strPlaylistFile) & vbNewLine
+For I = 1 To strNumberofEntries
+    StringListOfFiles = StringListOfFiles & Extensions.INIRead("playlist", "File" & I, strPlaylistFile) & vbNewLine
 Next
 
 LoadPlsFile = StringListOfFiles

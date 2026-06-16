@@ -57,8 +57,8 @@ End Enum
 '* @param enumAdioTagVersion AdioTags: The version of the tag you want to write (V1, V2)
 '* @return Boolean: Tells if the tags has been changed
 '*
-Public Function WriteTag(File As String, Value As String, TagType As enumAdioTags, TagVersion As enumAdioTagVersion) As Boolean
-WriteTag = modAdio.AdioWriteTag(File, Value, TagType, TagVersion)
+Public Function WriteTag(file As String, Value As String, TagType As enumAdioTags, TagVersion As enumAdioTagVersion) As Boolean
+WriteTag = modAdio.AdioWriteTag(file, Value, TagType, TagVersion)
 End Function
 '*
 '* Get file properties of a specified file
@@ -66,8 +66,8 @@ End Function
 '* @param enumAdioProperty PropertyType: The property you want to get
 '* @return String: The value of the property
 '*
-Public Function ReadProperty(File As String, PropertyType As enumAdioProperty) As String
-ReadProperty = modAdio.AdioReadAudioProperty(File, PropertyType)
+Public Function ReadProperty(file As String, PropertyType As enumAdioProperty) As String
+ReadProperty = modAdio.AdioReadAudioProperty(file, PropertyType)
 End Function
 '*
 '* Gets MP3 meta tags of a specified file
@@ -76,18 +76,13 @@ End Function
 '* @param enumAdioTagVersion TagVersion: The version of the tag you want to get (V1, V2)
 '* @return String: The value of the tag
 '*
-Public Function ReadTag(File As String, TagType As enumAdioTags, TagVersion As enumAdioTagVersion) As String
-ReadTag = modAdio.AdioReadTag(File, TagType, TagVersion)
+Public Function ReadTag(file As String, TagType As enumAdioTags, TagVersion As enumAdioTagVersion) As String
+ReadTag = modAdio.AdioReadTag(file, TagType, TagVersion)
 End Function
-
-Private Sub Image1_Click()
-
-End Sub
-
 '*
 '* Resize the usercontrol
 '*
 Private Sub UserControl_Resize()
-Width = Image_Main.Width
-Height = Image_Main.Height
+width = Image_Main.width
+height = Image_Main.height
 End Sub
