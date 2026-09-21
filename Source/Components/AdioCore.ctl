@@ -26,7 +26,7 @@ Attribute VB_Exposed = True
 '// FileType        : Microsoft Visual Basic 6 - Usercontrol
 '// Author          : Alex van den Berg
 '// Created         : 17-08-2023
-'// Last Modified   : 30-01-2026
+'// Last Modified   : 16-03-2026
 '// Copyright       : Sibra-Soft
 '// Description     : Adio core component
 '////////////////////////////////////////////////////////////////
@@ -37,6 +37,22 @@ Option Explicit
 Public AdioChannel As Long
 
 '// Enums
+Public Enum enumAdioSupportedFileTypes
+    [MID - Midi File] = 0
+    [KAR - Karaoke File] = 1
+    [SID - Commodore64 8Bit File] = 2
+    [MUS - Beep Symfony File] = 3
+    [MP2 - MPEG-1 Audio Layer 2 File] = 4
+    [MP3 - MPEG-1 Audio Layer 3 File] = 5
+    [WAV - Waveform Audio File] = 6
+    [WMA - Windows Media Audio] = 7
+    [OOG - Digital Multimedia Container File] = 8
+    [AIFF - Audio Interchange File] = 9
+    [AAC - Advanced Audio Coding File] = 10
+    [FLAC - Free Lossless Audio Codec File] = 11
+    [CDA - CD Audio] = 12
+End Enum
+
 Public Enum enumAdioSeekDirection
     AdioForward
     AdioRewind
@@ -62,8 +78,8 @@ Public Enum enumAdioRepeatMode
 End Enum
 
 '// Events
-Public Event GetVolume(Value As Integer)
-Public Event VolumeChanged(Value As Integer)
+Public Event GetVolume(value As Integer)
+Public Event VolumeChanged(value As Integer)
 Public Event Error(Description As String, Code As Integer)
 Public Event DeviceFound(id As Integer, Name As String, InputDev As Boolean, OutputDev As Boolean)
 Public Event SoundFont(file As String)

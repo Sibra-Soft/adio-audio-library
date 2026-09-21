@@ -43,18 +43,18 @@ End Function
 '* @param enumAdioTagVersion AdioTags: The version of the tag you want to write (V1, V2)
 '* @return Boolean: Tells if the tags has been changed
 '*
-Public Function AdioWriteTag(File As String, Value As String, TagType As enumAdioTags, TagVersion As enumAdioTagVersion) As Boolean
+Public Function AdioWriteTag(file As String, Value As String, TagType As enumAdioTags, TagVersion As enumAdioTagVersion) As Boolean
 Dim OutputTags As ID3Tag
 
-OutputTags.Artist = AdioReadTag(File, tArtist, TagVersion)
-OutputTags.Title = AdioReadTag(File, tTitle, TagVersion)
-OutputTags.Album = AdioReadTag(File, tAlbum, TagVersion)
-OutputTags.OrigArtist = AdioReadTag(File, tAlbumArtist, TagVersion)
-OutputTags.Composer = AdioReadTag(File, tComposer, TagVersion)
-OutputTags.Copyright = AdioReadTag(File, tCopyright, TagVersion)
-OutputTags.Genre = AdioReadTag(File, tGenre, TagVersion)
-OutputTags.SongYear = AdioReadTag(File, tYear, TagVersion)
-OutputTags.TrackNr = AdioReadTag(File, tTrackNumber, TagVersion)
+OutputTags.Artist = AdioReadTag(file, tArtist, TagVersion)
+OutputTags.Title = AdioReadTag(file, tTitle, TagVersion)
+OutputTags.Album = AdioReadTag(file, tAlbum, TagVersion)
+OutputTags.OrigArtist = AdioReadTag(file, tAlbumArtist, TagVersion)
+OutputTags.Composer = AdioReadTag(file, tComposer, TagVersion)
+OutputTags.Copyright = AdioReadTag(file, tCopyright, TagVersion)
+OutputTags.Genre = AdioReadTag(file, tGenre, TagVersion)
+OutputTags.SongYear = AdioReadTag(file, tYear, TagVersion)
+OutputTags.TrackNr = AdioReadTag(file, tTrackNumber, TagVersion)
 
 Select Case TagType
     Case enumAdioTags.tArtist: OutputTags.Artist = Value
@@ -69,9 +69,9 @@ Select Case TagType
 End Select
 
 If TagVersion = v1 Then
-    AdioWriteTag = TagLib.WriteID3v1(File, OutputTags, True)
+    AdioWriteTag = TagLib.WriteID3v1(file, OutputTags, True)
 Else
-    AdioWriteTag = TagLib.WriteID3v2(File, OutputTags, VERSION_2_4, True)
+    AdioWriteTag = TagLib.WriteID3v2(file, OutputTags, VERSION_2_4, True)
 End If
 End Function
 '*
@@ -80,28 +80,28 @@ End Function
 '* @param enumAdioProperty PropertyType: The property you want to get
 '* @return String: The value of the property
 '*
-Public Function AdioReadAudioProperty(File As String, PropertyType As enumAdioProperty) As String
+Public Function AdioReadAudioProperty(file As String, PropertyType As enumAdioProperty) As String
 Dim OutputInfo As MPEGInfo
 Dim Fso As New FileSystemObject
 
-If File = vbNullString Then: Exit Function
+If file = vbNullString Then: Exit Function
 
-If Fso.GetExtensionName(File) <> "mp3" Then
+If Fso.GetExtensionName(file) <> "mp3" Then
     ' When it's not a MP3 file
     Select Case PropertyType
-        Case enumAdioProperty.pDurationInSeconds: AdioReadAudioProperty = modFileProp.GetFileDurationInSeconds(File)
-        Case enumAdioProperty.pDurationString: AdioReadAudioProperty = Helpers.SecondsToTimeSerial(modFileProp.GetFileDurationInSeconds(File), SmallTimeSerial)
-        Case enumAdioProperty.pFileSize: AdioReadAudioProperty = FileLen(File)
+        Case enumAdioProperty.pDurationInSeconds: AdioReadAudioProperty = modFileProp.GetFileDurationInSeconds(file)
+        Case enumAdioProperty.pDurationString: AdioReadAudioProperty = Helpers.SecondsToTimeSerial(modFileProp.GetFileDurationInSeconds(file), SmallTimeSerial)
+        Case enumAdioProperty.pFileSize: AdioReadAudioProperty = FileLen(file)
     End Select
 Else
     ' When it's a MP3 file
-    TagLib.ReadMPEGInfo File, OutputInfo
+    TagLib.ReadMPEGInfo file, OutputInfo
     
     Select Case PropertyType
-        Case enumAdioProperty.pDurationInSeconds: AdioReadAudioProperty = modFileProp.GetFileDurationInSeconds(File)
-        Case enumAdioProperty.pBitrate: AdioReadAudioProperty = OutputInfo.Bitrate
-        Case enumAdioProperty.pFileSize: AdioReadAudioProperty = FileLen(File)
-        Case enumAdioProperty.pDurationString: AdioReadAudioProperty = Helpers.SecondsToTimeSerial(modFileProp.GetFileDurationInSeconds(File), SmallTimeSerial)
+        Case enumAdioProperty.pDurationInSeconds: AdioReadAudioProperty = modFileProp.GetFileDurationInSeconds(file)
+        Case enumAdioProperty.pBitrate: AdioReadAudioProperty = OutputInfo.bitrate
+        Case enumAdioProperty.pFileSize: AdioReadAudioProperty = FileLen(file)
+        Case enumAdioProperty.pDurationString: AdioReadAudioProperty = Helpers.SecondsToTimeSerial(modFileProp.GetFileDurationInSeconds(file), SmallTimeSerial)
         Case enumAdioProperty.pChannels: AdioReadAudioProperty = OutputInfo.ChannelMode
         Case enumAdioProperty.pFrequency: AdioReadAudioProperty = OutputInfo.Frequency
     End Select
@@ -114,15 +114,15 @@ End Function
 '* @param enumAdioTagVersion TagVersion: The version of the tag you want to get (V1, V2)
 '* @return String: The value of the tag
 '*
-Public Function AdioReadTag(File As String, TagType As enumAdioTags, TagVersion As enumAdioTagVersion) As String
+Public Function AdioReadTag(file As String, TagType As enumAdioTags, TagVersion As enumAdioTagVersion) As String
 Dim Output As ID3Tag
 
-If File = vbNullString Then: Exit Function
+If file = vbNullString Then: Exit Function
 
 If TagVersion = v2 Then
-    TagLib.ReadID3v2 File, Output
+    TagLib.ReadID3v2 file, Output
 Else
-    TagLib.ReadID3v1 File, Output
+    TagLib.ReadID3v1 file, Output
 End If
 
 Select Case TagType
@@ -216,12 +216,12 @@ End Sub
 '* @param enumAdioSeekDirection Direction: The direction you want to seek (rewind, forward)
 '* @param Integer Seconds: The amount of seconds you want to seek (default = 10)
 '*
-Public Sub AdioSeekBySeconds(Channel As Long, Direction As enumAdioSeekDirection, Optional Seconds As Integer = 10)
+Public Sub AdioSeekBySeconds(Channel As Long, Direction As enumAdioSeekDirection, Optional seconds As Integer = 10)
 Dim Pos As Long
 Dim AtPos As Long
 
 Pos = BASS_ChannelGetPosition(Channel, BASS_POS_BYTE)
-AtPos = BASS_ChannelSeconds2Bytes(Channel, Seconds)
+AtPos = BASS_ChannelSeconds2Bytes(Channel, seconds)
 
 Select Case Direction
     Case enumAdioSeekDirection.AdioForward: Call BASS_ChannelSetPosition64(Channel, Pos + AtPos, 0&, BASS_POS_BYTE)
@@ -234,10 +234,10 @@ End Sub
 '* @param enumAdioFadeType FadeType: The type of fade (IN or OUT)
 '* @param Integer Duration: The duration of the fade in seconds (default = 10)
 '*
-Public Sub AdioFade(Channel As Long, FadeType As enumAdioFadeType, Optional Duration As Integer = 5)
-Select Case FadeType
-    Case enumAdioFadeType.AdioIn: Call BASS_ChannelSlideAttribute(Channel, BASS_ATTRIB_VOL, 1, Duration * 1000)
-    Case enumAdioFadeType.AdioOut: Call BASS_ChannelSlideAttribute(Channel, BASS_ATTRIB_VOL, -1, Duration * 1000)
+Public Sub AdioFade(Channel As Long, fadeType As enumAdioFadeType, Optional duration As Integer = 5)
+Select Case fadeType
+    Case enumAdioFadeType.AdioIn: Call BASS_ChannelSlideAttribute(Channel, BASS_ATTRIB_VOL, 1, duration * 1000)
+    Case enumAdioFadeType.AdioOut: Call BASS_ChannelSlideAttribute(Channel, BASS_ATTRIB_VOL, -1, duration * 1000)
 End Select
 End Sub
 '*

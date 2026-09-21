@@ -1,6 +1,9 @@
 Attribute VB_Name = "modGlobals"
 Option Explicit
 
+' Declares
+Public Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
+
 ' Consts
 Public Const ADIO_PLAYSTATE_STOPPED = "AdioStopped"
 Public Const ADIO_PLAYSTATE_PLAYING = "AdioPlaying"
@@ -13,7 +16,6 @@ Public Const ADIO_SEEK_DIRECTION_REWIND = "AdioRewind"
 Public Const ADIO_FADE_IN = "AdioIn"
 Public Const ADIO_FADE_OUT = "AdioOut"
 Public Const ADIO_FADE_CROSS = "AdioCross"
-
 
 ' Types
 Public Type ADIO_DEVICE

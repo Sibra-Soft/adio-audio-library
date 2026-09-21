@@ -19,5 +19,3 @@ Public Const MB_LOWBYTE = &HFF
 Public Const MB_HIGHBYTE = &HFF00
 Public Const MB_DOEVENTSPOLLING = 10
 Public Const MB_DEVICEID = &H10
-
-Public Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)

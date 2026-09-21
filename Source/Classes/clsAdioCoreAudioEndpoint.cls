@@ -33,8 +33,8 @@ Private Const asmPUSH_imm32 As Byte = &H68
 Private Const asmRET_imm16 As Byte = &HC2
 Private Const asmCALL_rel32 As Byte = &HE8
 
-Private Const CLSCTX_INPROC_SERVER                      As Long = &H1
-Private Const CLSCTX_ALL                                As Long = &H0
+Private Const CLSCTX_INPROC_SERVER As Long = &H1
+Private Const CLSCTX_ALL As Long = &H0
 
 Private Const UUIDOF_MMDeviceEnumerator As String = "{bcde0395-e52f-467c-8e3d-c4579291692e}"
 Private Const UUIDOF_IMMDeviceEnumerator As String = "{a95664d2-9614-4f35-a746-de8db63617e6}"
@@ -87,123 +87,101 @@ Private Enum IMMDevice_Exports
     [GetState] = 6
 End Enum
 
-Private c_lngObjDevEnumerator                           As Long
-Private c_lngObjIMMDevice                               As Long
-Private c_lngObjAudioMeterInformation                   As Long
-Private c_blnInitialized                                As Boolean
-
-'    // Get enumerator for audio endpoint devices.
-'    hr = CoCreateInstance(__uuidof(MMDeviceEnumerator),
-'                          NULL, CLSCTX_INPROC_SERVER,
-'                          __uuidof(IMMDeviceEnumerator),
-'                          (void**)&pEnumerator);
-
-
-'    // Get peak meter for default audio-rendering device.
-'    hr = pEnumerator->GetDefaultAudioEndpoint(eRender, eConsole, &pDevice);
-
-
-'    hr = pDevice->Activate(__uuidof(IAudioMeterInformation),
-'                           CLSCTX_ALL, NULL, (void**)&pMeterInfo);
-
-
+Private c_lngObjDevEnumerator As Long
+Private c_lngObjIMMDevice As Long
+Private c_lngObjAudioMeterInformation As Long
+Private c_blnInitialized As Boolean
 Private Sub Class_Initialize()
-    Dim uuidMMDeviceEnumerator As UUID
-    Dim uuidIMMDeviceEnumerator As UUID
-    Dim uuidIAudioMeterInformation As UUID
+Dim uuidMMDeviceEnumerator As UUID
+Dim uuidIMMDeviceEnumerator As UUID
+Dim uuidIAudioMeterInformation As UUID
+
+If IsVista Then
+    Call IIDFromString(StrConv(UUIDOF_MMDeviceEnumerator, vbUnicode), uuidMMDeviceEnumerator)
+    Call IIDFromString(StrConv(UUIDOF_IMMDeviceEnumerator, vbUnicode), uuidIMMDeviceEnumerator)
+    Call IIDFromString(StrConv(UUIDOF_IAudioMeterInformation, vbUnicode), uuidIAudioMeterInformation)
     
-    If IsVista Then
-        Call IIDFromString(StrConv(UUIDOF_MMDeviceEnumerator, vbUnicode), uuidMMDeviceEnumerator)
-        Call IIDFromString(StrConv(UUIDOF_IMMDeviceEnumerator, vbUnicode), uuidIMMDeviceEnumerator)
-        Call IIDFromString(StrConv(UUIDOF_IAudioMeterInformation, vbUnicode), uuidIAudioMeterInformation)
-        
-        Call CoCreateInstance(uuidMMDeviceEnumerator, 0, CLSCTX_INPROC_SERVER, uuidIMMDeviceEnumerator, c_lngObjDevEnumerator)
-        If Not (c_lngObjDevEnumerator = 0) Then
-            Call CallInterface(c_lngObjDevEnumerator, [GetDefaultAudioEndpoint], 3, [eRender], [eConsole], VarPtr(c_lngObjIMMDevice))
-            If Not (c_lngObjIMMDevice = 0) Then
-                Call CallInterface(c_lngObjIMMDevice, [Activate], 4, VarPtr(uuidIAudioMeterInformation), CLSCTX_ALL, 0, VarPtr(c_lngObjAudioMeterInformation))
-                c_blnInitialized = Not (c_lngObjAudioMeterInformation = 0)
-            End If
+    Call CoCreateInstance(uuidMMDeviceEnumerator, 0, CLSCTX_INPROC_SERVER, uuidIMMDeviceEnumerator, c_lngObjDevEnumerator)
+    If Not (c_lngObjDevEnumerator = 0) Then
+        Call CallInterface(c_lngObjDevEnumerator, [GetDefaultAudioEndpoint], 3, [eRender], [eConsole], VarPtr(c_lngObjIMMDevice))
+        If Not (c_lngObjIMMDevice = 0) Then
+            Call CallInterface(c_lngObjIMMDevice, [Activate], 4, VarPtr(uuidIAudioMeterInformation), CLSCTX_ALL, 0, VarPtr(c_lngObjAudioMeterInformation))
+            c_blnInitialized = Not (c_lngObjAudioMeterInformation = 0)
         End If
     End If
+End If
 End Sub
 
 Private Sub Class_Terminate()
-    If IsVista Then
-        If Not (c_lngObjDevEnumerator = 0) Then Call CallInterface(c_lngObjDevEnumerator, [Release], 0)
-        If Not (c_lngObjIMMDevice = 0) Then Call CallInterface(c_lngObjIMMDevice, [Release], 0)
-        If Not (c_lngObjAudioMeterInformation = 0) Then Call CallInterface(c_lngObjAudioMeterInformation, [Release], 0)
-    End If
+If IsVista Then
+    If Not (c_lngObjDevEnumerator = 0) Then Call CallInterface(c_lngObjDevEnumerator, [Release], 0)
+    If Not (c_lngObjIMMDevice = 0) Then Call CallInterface(c_lngObjIMMDevice, [Release], 0)
+    If Not (c_lngObjAudioMeterInformation = 0) Then Call CallInterface(c_lngObjAudioMeterInformation, [Release], 0)
+End If
 End Sub
 
 Private Function IsVista() As Boolean
-    IsVista = (((GetVersion() And &HFFFF&) Mod 256) >= 6)
+IsVista = (((GetVersion() And &HFFFF&) Mod 256) >= 6)
 End Function
 
 Public Function GetPeak() As Single
-    If IsVista Then
-        If c_blnInitialized Then
-            Call CallInterface(c_lngObjAudioMeterInformation, [GetPeakValue], 1, VarPtr(GetPeak))
-        End If
+If IsVista Then
+    If c_blnInitialized Then
+        Call CallInterface(c_lngObjAudioMeterInformation, [GetPeakValue], 1, VarPtr(GetPeak))
     End If
+End If
 End Function
 
 Public Function GetChannelPeak(ByVal lngChannel As Long) As Single
-    Dim lngChannels As Long
-    Dim sngChannels() As Single
-    
-    If IsVista Then
-        If c_blnInitialized Then
-            Call CallInterface(c_lngObjAudioMeterInformation, [GetMeteringChannelCount], 1, VarPtr(lngChannels))
-            ReDim sngChannels(lngChannels)
-            Call CallInterface(c_lngObjAudioMeterInformation, [GetChannelsPeakValues], 2, lngChannels, VarPtr(sngChannels(0)))
-            GetChannelPeak = sngChannels(lngChannel)
-        End If
+Dim lngChannels As Long
+Dim sngChannels() As Single
+
+If IsVista Then
+    If c_blnInitialized Then
+        Call CallInterface(c_lngObjAudioMeterInformation, [GetMeteringChannelCount], 1, VarPtr(lngChannels))
+        ReDim sngChannels(lngChannels)
+        Call CallInterface(c_lngObjAudioMeterInformation, [GetChannelsPeakValues], 2, lngChannels, VarPtr(sngChannels(0)))
+        GetChannelPeak = sngChannels(lngChannel)
     End If
+End If
 End Function
 
 Private Function CallInterface(ByVal pInterface As Long, ByVal Member As Long, ByVal ParamsCount As Long, Optional ByVal p1 As Long = 0, Optional ByVal p2 As Long = 0, Optional ByVal p3 As Long = 0, Optional ByVal p4 As Long = 0, Optional ByVal p5 As Long = 0, Optional ByVal p6 As Long = 0, Optional ByVal p7 As Long = 0, Optional ByVal p8 As Long = 0, Optional ByVal p9 As Long = 0, Optional ByVal p10 As Long = 0) As Long
-  Dim I As Long, t As Long
-  Dim hGlobal As Long, hGlobalOffset As Long
-  
-  If ParamsCount < 0 Then Err.Raise 5 'invalid call
-  If pInterface = 0 Then Err.Raise 5
-  
-  hGlobal = GlobalAlloc(GMEM_FIXED, 5 * ParamsCount + 5 + 5 + 3 + 1)
-  If hGlobal = 0 Then Err.Raise 7 'insuff. memory
-  hGlobalOffset = hGlobal
-  
-  If ParamsCount > 0 Then
-    t = VarPtr(p1)
-    For I = ParamsCount - 1 To 0 Step -1
-      Call PutMem2(hGlobalOffset, asmPUSH_imm32)
-      hGlobalOffset = hGlobalOffset + 1
-      Call GetMem4(t + I * 4, hGlobalOffset)
-      hGlobalOffset = hGlobalOffset + 4
-    Next
-  End If
-  
-  '?????? ???????? ?????? ????????????? ?????? - this. ??????...
-  ' PUSH y ponemos el puntero a la interfas
-  Call PutMem2(hGlobalOffset, asmPUSH_imm32)
-  hGlobalOffset = hGlobalOffset + 1
-  Call PutMem4(hGlobalOffset, pInterface)
-  hGlobalOffset = hGlobalOffset + 4
-  
-  '????? ??????? ??????????
-  ' Llamamos
-  Call PutMem2(hGlobalOffset, asmCALL_rel32)
-  hGlobalOffset = hGlobalOffset + 1
-  Call GetMem4(pInterface, VarPtr(t))     '??????????: ??????? ????????? vTable
-  Call GetMem4(t + Member * 4, VarPtr(t)) '???????? ?? vTable, ????? ???? ?????????? ?????
-  Call PutMem4(hGlobalOffset, t - hGlobalOffset - 4)
-  hGlobalOffset = hGlobalOffset + 4
+Dim I As Long, T As Long
+Dim hGlobal As Long, hGlobalOffset As Long
 
-  '?????????? stdcall. ??????? ?? ????? cdecl ?????????.
-    
-  Call PutMem4(hGlobalOffset, &H10C2&)        'ret 0x0010
-  
-  CallInterface = CallWindowProc(hGlobal, 0, 0, 0, 0)
-  
-  Call GlobalFree(hGlobal)
+If ParamsCount < 0 Then Err.Raise 5 'invalid call
+If pInterface = 0 Then Err.Raise 5
+
+hGlobal = GlobalAlloc(GMEM_FIXED, 5 * ParamsCount + 5 + 5 + 3 + 1)
+If hGlobal = 0 Then Err.Raise 7 'insuff. memory
+hGlobalOffset = hGlobal
+
+If ParamsCount > 0 Then
+  T = VarPtr(p1)
+  For I = ParamsCount - 1 To 0 Step -1
+    Call PutMem2(hGlobalOffset, asmPUSH_imm32)
+    hGlobalOffset = hGlobalOffset + 1
+    Call GetMem4(T + I * 4, hGlobalOffset)
+    hGlobalOffset = hGlobalOffset + 4
+  Next
+End If
+
+Call PutMem2(hGlobalOffset, asmPUSH_imm32)
+hGlobalOffset = hGlobalOffset + 1
+Call PutMem4(hGlobalOffset, pInterface)
+hGlobalOffset = hGlobalOffset + 4
+
+Call PutMem2(hGlobalOffset, asmCALL_rel32)
+hGlobalOffset = hGlobalOffset + 1
+Call GetMem4(pInterface, VarPtr(T))
+Call GetMem4(T + Member * 4, VarPtr(T))
+Call PutMem4(hGlobalOffset, T - hGlobalOffset - 4)
+hGlobalOffset = hGlobalOffset + 4
+ 
+Call PutMem4(hGlobalOffset, &H10C2&)
+
+CallInterface = CallWindowProc(hGlobal, 0, 0, 0, 0)
+
+Call GlobalFree(hGlobal)
 End Function
